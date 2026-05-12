@@ -100,24 +100,46 @@ vercel.json                   # Config rewrites API route
 
 ## Plan de développement (étapes séquentielles)
 
-### Étape 1 — Scaffold & Globe statique
-- Initialiser le projet (npm install)
-- Créer le composant Globe.jsx avec une sphère texturée (NASA Blue Marble)
-- Ajouter OrbitControls (zoom, rotation)
-- Éclairage : ambientLight + directionalLight (simule le soleil)
-- Tester : `npm run dev` → globe visible et manipulable
+### Étape 1 — Scaffold & Globe statique ✅ TERMINÉE
+- Dépendances installées via `npm install --ignore-scripts` (three, @react-three/fiber, @react-three/drei, zustand, d3-geo)
+- `src/components/Globe.jsx` : sphère rayon **R = 2**, 64 segments, `meshStandardMaterial`
+- Texture NASA Blue Marble chargée via `useLoader(THREE.TextureLoader, '/textures/earth_daymap.jpg')` ; **ErrorBoundary** retombe sur un material couleur unie `#1e3a5f` si le fichier est absent (texture à déposer manuellement)
+- `src/App.jsx` : Canvas R3F plein viewport, camera `[0,0,5]` fov 50, `OrbitControls` (zoom borné 2.5–10, no pan), ambient 0.4 + directional 1.2
+- `src/index.css` : `#root` → 100vw/100vh, body noir
 
-### Étape 2 — Store Zustand & Hook WebSocket
-- Créer useShipStore.js (Map des navires, état connexion, navire sélectionné)
-- Créer useAISStream.js (connexion WebSocket, parsing, filtrage 70-79, throttle)
-- Créer aisParser.js (extraction des champs utiles des messages AIS)
-- Tester avec console.log : vérifier que les navires arrivent bien filtrés
+### Étape 2 — Store Zustand & Hook WebSocket ✅ TERMINÉE
+- `.env.example` créé, `.env` + `.claude/` ajoutés au `.gitignore`
+- `src/utils/aisParser.js` : `parseMessage()` pur, gère `PositionReport` + `ShipStaticData`, `BULK_CARRIER_TYPES = {70..79}`, ignore `TrueHeading = 511` (= non disponible AIS)
+- `src/stores/useShipStore.js` : Zustand + `subscribeWithSelector`. State = `{ ships: Map, pendingPositions: Map, blacklist: Set, connectionStatus, selectedMMSI }`. Actions = `applyBatch`, `setConnectionStatus`, `setSelectedMMSI`, `pruneStale`
+- **Logique de promotion** : positions reçues avant connaissance du type → bufferisées dans `pendingPositions`. À réception de `ShipStaticData` : si type ∈ 70-79 → promotion dans `ships` (merge avec position pending) ; sinon → ajout au `blacklist`
+- `src/hooks/useAISStream.js` : WebSocket vers `wss://stream.aisstream.io/v0/stream`, buffer interne (Map MMSI), flush vers store à 1 Hz, backoff exponentiel 1s→30s (reset après 5s stable), `pruneStale(30min)` toutes les 60s, warning gracieux si `VITE_AIS_API_KEY` absente
+- BoundingBox actuelle (constante en haut du hook) : Atlantique Nord élargi `[[20,-100],[65,20]]`
+- Helper dev : `window.__shipStore = useShipStore` (uniquement en mode DEV)
 
-### Étape 3 — Marqueurs sur le globe
-- Créer geoUtils.js (lat/lon → Vector3 sur sphère rayon R)
-- Créer ShipMarkers.jsx (lit le store, place les marqueurs en 3D)
-- Matériau vert émissif pour les points
-- Vérifier visuellement que les navires apparaissent aux bonnes positions
+### Étape 3 — Marqueurs sur le globe (À FAIRE)
+
+**Forme du store à consommer** (fixée par étape 2) :
+- `ships: Map<mmsi, { mmsi, lat, lon, speed, course, heading, name, destination, shipType, lastSeen }>`
+- Sélecteur Zustand à privilégier : `useShipStore(state => state.ships)` ; renvoie une nouvelle `Map` à chaque batch (1×/s max grâce au throttle hook)
+
+**Travail à faire** :
+- `src/utils/geoUtils.js` : fonction `latLonToVector3(lat, lon, radius = 2)` utilisant d3-geo ou trigonométrie directe. Convention sphère Three.js : Y = up. Formule standard : `x = R·cos(lat)·cos(lon)`, `y = R·sin(lat)`, `z = -R·cos(lat)·sin(lon)` (signe Z dépend de l'orientation de la texture — à valider visuellement avec des points de référence connus, ex. Rotterdam ≈ 51.95°N 4.14°E, New Orleans ≈ 29.95°N -90.07°W).
+- `src/components/ShipMarkers.jsx` : lit `ships` depuis le store, place les marqueurs en 3D.
+  - **Performance** : si > 50 navires simultanés → utiliser `<instancedMesh>` (cf. règle CLAUDE.md "Performance Three.js"). Sinon, mesh individuel acceptable. Avec la bbox actuelle (Atlantique Nord, vraquiers céréaliers), on devrait dépasser 50 → prévoir InstancedMesh dès le départ.
+  - Matériau : `meshStandardMaterial` avec `emissive` vert lumineux + `emissiveIntensity` (~1.5), géométrie sphère petite (ex: `sphereGeometry` rayon 0.015).
+  - **MAJ in-place** : à chaque batch, mettre à jour les `matrix` des instances existantes plutôt que recréer le mesh (règle CLAUDE.md). Conserver un mapping `mmsi → instanceIndex`.
+- Intégrer `<ShipMarkers />` dans `App.jsx` à l'intérieur du `<Canvas>`, après `<Globe />`.
+
+**Validation** :
+- Visuellement : les marqueurs apparaissent à des positions plausibles (clusters aux routes maritimes connues, ports majeurs visibles).
+- Pas de drop de FPS : ouvrir devtools → Performance, viser 60 fps même avec >100 marqueurs.
+- Désactiver/réactiver le `.env` (= simuler perte de flux) : les marqueurs existants restent affichés, prune après 30 min.
+
+### Étape 4 — Interaction & panneau de détails
+- Clic sur un marqueur → setSelectedShip dans le store
+- Créer InfoPanel.jsx (affiche nom, MMSI, vitesse, cap, destination)
+- Animation slide-in/out du panneau
+- HUD.jsx : compteur de navires actifs
 
 ### Étape 4 — Interaction & panneau de détails
 - Clic sur un marqueur → setSelectedShip dans le store

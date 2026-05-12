@@ -11,6 +11,11 @@ const BACKOFF_MIN_MS = 1000
 const BACKOFF_MAX_MS = 30_000
 const STABLE_OPEN_MS = 5000
 
+// AISStream envoie ses frames en binaire (pas en texte). On force arraybuffer
+// et on décode explicitement, sinon event.data est un Blob qui fait silencieusement
+// échouer JSON.parse.
+const TEXT_DECODER = new TextDecoder('utf-8')
+
 export function useAISStream() {
   const bufferRef = useRef({ positions: new Map(), statics: new Map() })
   const socketRef = useRef(null)
@@ -18,6 +23,7 @@ export function useAISStream() {
   const reconnectTimerRef = useRef(null)
   const openSinceRef = useRef(0)
   const unmountedRef = useRef(false)
+  const rxRef = useRef({ raw: 0, parsedPos: 0, parsedStatic: 0, sampleLogged: 0 })
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_AIS_API_KEY
@@ -40,6 +46,7 @@ export function useAISStream() {
       if (unmountedRef.current) return
       setStatus('connecting')
       const ws = new WebSocket(AIS_URL)
+      ws.binaryType = 'arraybuffer'
       socketRef.current = ws
 
       ws.addEventListener('open', () => {
@@ -56,12 +63,33 @@ export function useAISStream() {
       })
 
       ws.addEventListener('message', (event) => {
-        const parsed = parseMessage(event.data)
-        if (!parsed) return
-        if (parsed.kind === 'position') {
+        rxRef.current.raw++
+        const raw = event.data instanceof ArrayBuffer ? TEXT_DECODER.decode(event.data) : event.data
+        const parsed = parseMessage(raw)
+        if (parsed?.kind === 'position') {
+          rxRef.current.parsedPos++
           bufferRef.current.positions.set(parsed.mmsi, parsed.data)
-        } else if (parsed.kind === 'static') {
+          return
+        }
+        if (parsed?.kind === 'static') {
+          rxRef.current.parsedStatic++
           bufferRef.current.statics.set(parsed.mmsi, parsed.data)
+          return
+        }
+        // Non-parsable : remonter l'info en DEV pour ne pas laisser le flux opaque.
+        // AISStream renvoie ses erreurs serveur (clé invalide, bbox malformée) ainsi.
+        if (import.meta.env.DEV) {
+          try {
+            const env = JSON.parse(raw)
+            if (env && (env.error || env.Error)) {
+              console.warn('[AIS] server error:', env.error || env.Error)
+            } else if (rxRef.current.sampleLogged < 3) {
+              rxRef.current.sampleLogged++
+              console.warn('[AIS] unrecognized message sample:', env)
+            }
+          } catch {
+            /* non-JSON, ignore */
+          }
         }
       })
 
@@ -91,8 +119,9 @@ export function useAISStream() {
       applyBatch(batch)
       if (import.meta.env.DEV) {
         const s = useShipStore.getState()
+        const rx = rxRef.current
         console.log(
-          `[AIS] flush: confirmed=${s.ships.size} pending=${s.pendingPositions.size} blacklist=${s.blacklist.size}`,
+          `[AIS] flush rx=${rx.raw} parsed=${rx.parsedPos}p/${rx.parsedStatic}s confirmed=${s.ships.size} pending=${s.pendingPositions.size} blacklist=${s.blacklist.size}`,
         )
       }
     }, FLUSH_INTERVAL_MS)

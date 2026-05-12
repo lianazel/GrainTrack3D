@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import Globe from './components/Globe'
+import ShipMarkers from './components/ShipMarkers'
 import { useAISStream } from './hooks/useAISStream'
 import { useShipStore } from './stores/useShipStore'
 
@@ -16,6 +17,7 @@ export default function App() {
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 3, 5]} intensity={1.2} />
       <Globe />
+      <ShipMarkers />
       <OrbitControls enablePan={false} minDistance={2.5} maxDistance={10} />
     </Canvas>
   )
