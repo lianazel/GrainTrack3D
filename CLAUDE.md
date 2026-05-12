@@ -103,7 +103,7 @@ vercel.json                   # Config rewrites API route
 ### Étape 1 — Scaffold & Globe statique ✅ TERMINÉE
 - Dépendances installées via `npm install --ignore-scripts` (three, @react-three/fiber, @react-three/drei, zustand, d3-geo)
 - `src/components/Globe.jsx` : sphère rayon **R = 2**, 64 segments, `meshStandardMaterial`
-- Texture NASA Blue Marble chargée via `useLoader(THREE.TextureLoader, '/textures/earth_daymap.jpg')` ; **ErrorBoundary** retombe sur un material couleur unie `#1e3a5f` si le fichier est absent (texture à déposer manuellement)
+- Texture NASA Blue Marble chargée via `useLoader(THREE.TextureLoader, '/textures/earth_daymap.jpg')` ; **ErrorBoundary** retombe sur un material couleur unie `#1e3a5f` si le fichier est absent. Texture commitée dans `public/textures/earth_daymap.jpg` (5400×2700, 2.5 MB).
 - `src/App.jsx` : Canvas R3F plein viewport, camera `[0,0,5]` fov 50, `OrbitControls` (zoom borné 2.5–10, no pan), ambient 0.4 + directional 1.2
 - `src/index.css` : `#root` → 100vw/100vh, body noir
 
@@ -171,9 +171,11 @@ vercel deploy      # Déployer sur Vercel
 - Les commits sont validés et exécutés par le développeur
 - Convention commit messages : `feat:`, `fix:`, `chore:`, `docs:`
 
-## Ressources textures
+## Ressources textures ✅ TERMINÉE
 
-La texture NASA Blue Marble peut être téléchargée depuis :
-- https://visibleearth.nasa.gov/images/73909/december-blue-marble-next-generation-w-topography-and-bathymetry
-- Format recommandé : JPEG, résolution 4096x2048 minimum
-- Placer dans public/textures/earth_daymap.jpg
+Texture NASA Blue Marble Next Generation (décembre, topographie + bathymétrie)
+téléchargée et commitée dans `public/textures/earth_daymap.jpg` (5400×2700, 2.5 MB).
+
+Source actuelle (la page visibleearth.nasa.gov redirige désormais ici) :
+- https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-topography-bathymetry
+- URL JPEG directe : `https://assets.science.nasa.gov/content/dam/science/esd/eo/images/bmng/bmng-topography-bathymetry/december/world.topo.bathy.200412.3x5400x2700.jpg`
