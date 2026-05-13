@@ -16,6 +16,18 @@ const STABLE_OPEN_MS = 5000
 // échouer JSON.parse.
 const TEXT_DECODER = new TextDecoder('utf-8')
 
+// Récupère la clé AISStream. Dev : injectée par Vite via .env. Prod : servie par
+// la serverless function /api/ais-config (la clé n'est jamais bundlée dans le JS).
+async function fetchApiKey() {
+  if (import.meta.env.DEV) {
+    return import.meta.env.VITE_AIS_API_KEY
+  }
+  const res = await fetch('/api/ais-config')
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  const data = await res.json()
+  return data?.key
+}
+
 export function useAISStream() {
   const bufferRef = useRef({ positions: new Map(), statics: new Map() })
   const socketRef = useRef(null)
@@ -26,23 +38,17 @@ export function useAISStream() {
   const rxRef = useRef({ raw: 0, parsedPos: 0, parsedStatic: 0, sampleLogged: 0 })
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_AIS_API_KEY
     const setStatus = useShipStore.getState().setConnectionStatus
     const applyBatch = useShipStore.getState().applyBatch
     const pruneStale = useShipStore.getState().pruneStale
 
-    if (!apiKey) {
-      console.warn(
-        '[AIS] VITE_AIS_API_KEY manquante. Cr\u00e9e un fichier .env \u00e0 la racine ' +
-          'avec ta cl\u00e9 AISStream.io (voir .env.example). Aucune connexion ne sera tent\u00e9e.',
-      )
-      setStatus('error')
-      return
-    }
-
     unmountedRef.current = false
+    let flushInterval = null
+    let pruneInterval = null
+    let apiKey = null
 
     const connect = () => {
+      if (!apiKey) return
       if (unmountedRef.current) return
       setStatus('connecting')
       const ws = new WebSocket(AIS_URL)
@@ -111,32 +117,54 @@ export function useAISStream() {
       })
     }
 
-    const flushInterval = setInterval(() => {
-      const buf = bufferRef.current
-      if (buf.positions.size === 0 && buf.statics.size === 0) return
-      const batch = { positions: buf.positions, statics: buf.statics }
-      bufferRef.current = { positions: new Map(), statics: new Map() }
-      applyBatch(batch)
-      if (import.meta.env.DEV) {
-        const s = useShipStore.getState()
-        const rx = rxRef.current
-        console.log(
-          `[AIS] flush rx=${rx.raw} parsed=${rx.parsedPos}p/${rx.parsedStatic}s confirmed=${s.ships.size} pending=${s.pendingPositions.size} blacklist=${s.blacklist.size}`,
-        )
+    ;(async () => {
+      let key
+      try {
+        key = await fetchApiKey()
+      } catch (err) {
+        if (unmountedRef.current) return
+        console.warn('[AIS] échec récupération clé API:', err.message)
+        setStatus('error')
+        return
       }
-    }, FLUSH_INTERVAL_MS)
+      if (unmountedRef.current) return
+      if (!key) {
+        console.warn(
+          '[AIS] clé API manquante. Dev : créer .env avec VITE_AIS_API_KEY (voir .env.example). ' +
+            'Prod : définir AIS_API_KEY dans Vercel Dashboard. Aucune connexion ne sera tentée.',
+        )
+        setStatus('error')
+        return
+      }
+      apiKey = key
 
-    const pruneInterval = setInterval(() => {
-      const pruned = pruneStale(STALE_AGE_MS)
-      if (pruned > 0 && import.meta.env.DEV) console.log(`[AIS] pruned ${pruned} stale entries`)
-    }, PRUNE_INTERVAL_MS)
+      flushInterval = setInterval(() => {
+        const buf = bufferRef.current
+        if (buf.positions.size === 0 && buf.statics.size === 0) return
+        const batch = { positions: buf.positions, statics: buf.statics }
+        bufferRef.current = { positions: new Map(), statics: new Map() }
+        applyBatch(batch)
+        if (import.meta.env.DEV) {
+          const s = useShipStore.getState()
+          const rx = rxRef.current
+          console.log(
+            `[AIS] flush rx=${rx.raw} parsed=${rx.parsedPos}p/${rx.parsedStatic}s confirmed=${s.ships.size} pending=${s.pendingPositions.size} blacklist=${s.blacklist.size}`,
+          )
+        }
+      }, FLUSH_INTERVAL_MS)
 
-    connect()
+      pruneInterval = setInterval(() => {
+        const pruned = pruneStale(STALE_AGE_MS)
+        if (pruned > 0 && import.meta.env.DEV) console.log(`[AIS] pruned ${pruned} stale entries`)
+      }, PRUNE_INTERVAL_MS)
+
+      connect()
+    })()
 
     return () => {
       unmountedRef.current = true
-      clearInterval(flushInterval)
-      clearInterval(pruneInterval)
+      if (flushInterval) clearInterval(flushInterval)
+      if (pruneInterval) clearInterval(pruneInterval)
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
       if (socketRef.current) {
         socketRef.current.close()
