@@ -116,43 +116,31 @@ vercel.json                   # Config rewrites API route
 - BoundingBox actuelle (constante en haut du hook) : Atlantique Nord élargi `[[20,-100],[65,20]]`
 - Helper dev : `window.__shipStore = useShipStore` (uniquement en mode DEV)
 
-### Étape 3 — Marqueurs sur le globe (À FAIRE)
+### Étape 3 — Marqueurs sur le globe ✅ TERMINÉE
+- `src/utils/geoUtils.js` : `latLonToVector3(lat, lon, radius = 2)` — trigonométrie directe (pas d3-geo), Y = up. Formule : `x = R·cos(lat)·cos(lon)`, `y = R·sin(lat)`, `z = -R·cos(lat)·sin(lon)`.
+- `src/components/ShipMarkers.jsx` : `<instancedMesh>` capacité 5000, `sphereGeometry` rayon 0.015, `meshStandardMaterial` emissive vert + `emissiveIntensity` ~1.5. MAJ in-place des matrices (mapping `mmsi → instanceIndex` conservé entre batches, pas de recréation de mesh).
+- `src/App.jsx` : `<ShipMarkers />` intégré dans le `<Canvas>` après `<Globe />`.
+- **Fix transport critique** : décodage explicite des frames WebSocket AISStream (`ws.binaryType = 'arraybuffer'` + `TextDecoder`). Sans ça, `event.data` arrivait en `Blob` et `parseMessage` retournait `null` silencieusement → globe vide en apparence sans erreur. Logs DEV ajoutés pour les erreurs serveur AIS + échantillon (≤3) de messages non reconnus.
+- `scripts/ais-probe.mjs` : outil standalone Node pour diagnostiquer le flux AIS hors React (utile pour reproduire vite un problème de transport).
 
-**Forme du store à consommer** (fixée par étape 2) :
-- `ships: Map<mmsi, { mmsi, lat, lon, speed, course, heading, name, destination, shipType, lastSeen }>`
-- Sélecteur Zustand à privilégier : `useShipStore(state => state.ships)` ; renvoie une nouvelle `Map` à chaque batch (1×/s max grâce au throttle hook)
+### Étape 4 — Interaction & panneau de détails ✅ TERMINÉE
+- `src/components/InfoPanel.jsx` : panneau slide-in 320px droite (220ms), affiche nom / MMSI / shipType / vitesse / cap (COG) / heading / destination / position / `lastSeen`. Mémorise `lastShip` pour rester visible pendant l'animation de sortie.
+- `src/components/HUD.jsx` : pill flottant top-left avec compteur de navires + badge connexion (5 statuts, animation `pulse` en `connecting`/`reconnecting`).
+- `src/components/ShipMarkers.jsx` : handler `onClick` avec reverse map `mmsiByIndex`. **Raycast custom** (hitbox sphère rayon 0.04 par instance) car le raycast triangle-précis par défaut sur des sphères 0.015 à 8 segments rate quasi tous les clics aux distances caméra utilisées.
+- `src/App.jsx` : `<Fragment>` + `onPointerMissed` (désélection sur clic dans le vide) + `<OrbitControls makeDefault />` — indispensable pour que R3F voie les `onClick` *en parallèle* des controls, sinon l'OrbitControls capture tous les pointer events.
 
-**Travail à faire** :
-- `src/utils/geoUtils.js` : fonction `latLonToVector3(lat, lon, radius = 2)` utilisant d3-geo ou trigonométrie directe. Convention sphère Three.js : Y = up. Formule standard : `x = R·cos(lat)·cos(lon)`, `y = R·sin(lat)`, `z = -R·cos(lat)·sin(lon)` (signe Z dépend de l'orientation de la texture — à valider visuellement avec des points de référence connus, ex. Rotterdam ≈ 51.95°N 4.14°E, New Orleans ≈ 29.95°N -90.07°W).
-- `src/components/ShipMarkers.jsx` : lit `ships` depuis le store, place les marqueurs en 3D.
-  - **Performance** : si > 50 navires simultanés → utiliser `<instancedMesh>` (cf. règle CLAUDE.md "Performance Three.js"). Sinon, mesh individuel acceptable. Avec la bbox actuelle (Atlantique Nord, vraquiers céréaliers), on devrait dépasser 50 → prévoir InstancedMesh dès le départ.
-  - Matériau : `meshStandardMaterial` avec `emissive` vert lumineux + `emissiveIntensity` (~1.5), géométrie sphère petite (ex: `sphereGeometry` rayon 0.015).
-  - **MAJ in-place** : à chaque batch, mettre à jour les `matrix` des instances existantes plutôt que recréer le mesh (règle CLAUDE.md). Conserver un mapping `mmsi → instanceIndex`.
-- Intégrer `<ShipMarkers />` dans `App.jsx` à l'intérieur du `<Canvas>`, après `<Globe />`.
+### Étape 5 — API route Vercel & déploiement ✅ TERMINÉE
+- **Production live : https://grain-track3-d.vercel.app** (647 vraquiers temps réel au déploiement initial)
+- **Décision d'archi** : la clé API n'est JAMAIS injectée au build (pas de `VITE_AIS_API_KEY` côté prod). Architecture complète documentée dans `docs/architecture-etape5-vercel.md`.
+- `api/ais-config.js` : serverless function Vercel, GET-only, lit `process.env.AIS_API_KEY` et renvoie `{ key }` en JSON. Header `Cache-Control: no-store`, 405 sur autre verbe, 500 générique si clé absente (ne révèle pas la cause).
+- `vercel.json` : rewrite SPA `"/((?!api/).*)" → "/index.html"` (exclut explicitement `/api/*` du fallback pour que les serverless functions soient routées correctement).
+- `src/hooks/useAISStream.js` : helper `fetchApiKey()` async. En dev (`import.meta.env.DEV`) → lit `import.meta.env.VITE_AIS_API_KEY`. En prod → `fetch('/api/ais-config')`. IIFE async dans le `useEffect` avant `connect()`, avec garde `unmountedRef` pour cleanup-safety. `apiKey` capturé en closure (pas de param) → `setTimeout(connect, delay)` du backoff inchangé.
+- `.env.example` : documente `VITE_AIS_API_KEY` (dev) et `AIS_API_KEY` (prod, à définir dans Vercel Dashboard → Settings → Environment Variables, scope Production).
+- Zéro nouvelle dépendance npm (la serverless function utilise uniquement les API Node natives).
 
-**Validation** :
-- Visuellement : les marqueurs apparaissent à des positions plausibles (clusters aux routes maritimes connues, ports majeurs visibles).
-- Pas de drop de FPS : ouvrir devtools → Performance, viser 60 fps même avec >100 marqueurs.
-- Désactiver/réactiver le `.env` (= simuler perte de flux) : les marqueurs existants restent affichés, prune après 30 min.
+## Known issues
 
-### Étape 4 — Interaction & panneau de détails
-- Clic sur un marqueur → setSelectedShip dans le store
-- Créer InfoPanel.jsx (affiche nom, MMSI, vitesse, cap, destination)
-- Animation slide-in/out du panneau
-- HUD.jsx : compteur de navires actifs
-
-### Étape 4 — Interaction & panneau de détails
-- Clic sur un marqueur → setSelectedShip dans le store
-- Créer InfoPanel.jsx (affiche nom, MMSI, vitesse, cap, destination)
-- Animation slide-in/out du panneau
-- HUD.jsx : compteur de navires actifs
-
-### Étape 5 — API route Vercel & déploiement
-- Créer api/ais-proxy.js (serverless function qui proxie vers AISStream)
-- Configurer vercel.json (rewrites)
-- Adapter le hook WebSocket pour utiliser l'API route en production
-- Tester localement avec `vercel dev`
-- Déployer sur Vercel
+- **LibreWolf** : l'app ne fonctionne pas (globe noir / pas de navires). LibreWolf est un fork de Firefox orienté vie privée qui désactive par défaut WebGL et bloque les WebSocket externes (durcissement anti-fingerprinting). Pas de bug applicatif — comportement attendu côté navigateur. **Navigateurs supportés et testés** : Chrome, Edge, Firefox standard.
 
 ## Commandes utiles
 
