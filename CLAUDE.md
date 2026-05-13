@@ -138,6 +138,14 @@ vercel.json                   # Config rewrites API route
 - `.env.example` : documente `VITE_AIS_API_KEY` (dev) et `AIS_API_KEY` (prod, à définir dans Vercel Dashboard → Settings → Environment Variables, scope Production).
 - Zéro nouvelle dépendance npm (la serverless function utilise uniquement les API Node natives).
 
+## Release v1.0.0 ✅ EN PLACE
+
+- `package.json` : version `1.0.0`
+- `src/components/HUD.jsx` : affiche `v{APP_VERSION}` via import nommé `{ version } from '../../package.json'` (Vite tree-shake les autres clés du JSON). Style `.hud-version` discret gris clair, entre le compteur et le badge de statut.
+- `README.md` : présentation publique (live demo, stack, dev local, AIS, déploiement Vercel).
+- `CHANGELOG.md` : format Keep a Changelog, entrée `[1.0.0] — 2026-05-13` pour le premier déploiement public.
+- Toute incrémentation future de la version : modifier `package.json` (source unique), ajouter une entrée datée dans `CHANGELOG.md`. Le HUD se met à jour automatiquement au build.
+
 ## Known issues
 
 - **LibreWolf** : l'app ne fonctionne pas (globe noir / pas de navires). LibreWolf est un fork de Firefox orienté vie privée qui désactive par défaut WebGL et bloque les WebSocket externes (durcissement anti-fingerprinting). Pas de bug applicatif — comportement attendu côté navigateur. **Navigateurs supportés et testés** : Chrome, Edge, Firefox standard.
