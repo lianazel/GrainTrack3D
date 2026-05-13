@@ -1,4 +1,5 @@
 import { useShipStore } from '../stores/useShipStore'
+import { version as APP_VERSION } from '../../package.json'
 
 const STATUS_LABELS = {
   idle: 'Inactif',
@@ -18,6 +19,7 @@ export default function HUD() {
       <span className="hud-count">
         <strong>{count}</strong> vraquier{count > 1 ? 's' : ''}
       </span>
+      <span className="hud-version">v{APP_VERSION}</span>
       <span className="hud-status">{STATUS_LABELS[status] ?? status}</span>
     </div>
   )

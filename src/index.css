@@ -140,6 +140,13 @@ code {
   font-size: 12px;
 }
 
+.hud-version {
+  color: #9ca3af;
+  font-size: 11px;
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
+
 .hud-badge {
   width: 8px;
   height: 8px;
