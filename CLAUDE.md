@@ -49,7 +49,11 @@ src/
 │   ├── ShipMarkers.jsx      # Instanced meshes pour tous les navires
 │   ├── ShipMarker.jsx       # Marqueur individuel (si non-instancé)
 │   ├── InfoPanel.jsx        # Panneau latéral détails navire sélectionné
+│   ├── GrainSelector.jsx    # Dropdown filtre céréales (12 céréales + "Toutes")
 │   └── HUD.jsx              # Compteur navires actifs, légende, contrôles
+├── data/
+│   ├── grainPorts.json      # Base de donnees ports/cereales (~130 ports, 12 cereales)
+│   └── grainList.js         # Liste des 12 cereales (cles, labels, emojis)
 ├── stores/
 │   └── useShipStore.js      # Zustand store : ships Map, selectedShip, connection status
 ├── hooks/
@@ -57,7 +61,8 @@ src/
 │   └── useGeoPosition.js    # Hook conversion lat/lon → Vector3 sur sphère
 ├── utils/
 │   ├── geoUtils.js          # Fonctions d3-geo : projection lat/lon → xyz
-│   └── aisParser.js         # Parsing et filtrage des messages AIS
+│   ├── aisParser.js         # Parsing et filtrage des messages AIS
+│   └── portMatcher.js       # Matching destination AIS <-> aliases port (cereales)
 ├── styles/
 │   └── index.css            # Styles globaux, dark theme, panneau latéral
 api/
@@ -137,6 +142,35 @@ vercel.json                   # Config rewrites API route
 - `src/hooks/useAISStream.js` : helper `fetchApiKey()` async. En dev (`import.meta.env.DEV`) → lit `import.meta.env.VITE_AIS_API_KEY`. En prod → `fetch('/api/ais-config')`. IIFE async dans le `useEffect` avant `connect()`, avec garde `unmountedRef` pour cleanup-safety. `apiKey` capturé en closure (pas de param) → `setTimeout(connect, delay)` du backoff inchangé.
 - `.env.example` : documente `VITE_AIS_API_KEY` (dev) et `AIS_API_KEY` (prod, à définir dans Vercel Dashboard → Settings → Environment Variables, scope Production).
 - Zéro nouvelle dépendance npm (la serverless function utilise uniquement les API Node natives).
+
+### Étape 6 — Filtre cereales par port de destination ✅ TERMINÉE
+- `src/data/grainPorts.json` : base de donnees de ~130 ports mondiaux mappes sur 12 cereales (wheat, corn, rice, soybean, sugar, barley, oats, sorghum, rapeseed, groundnut, lentils, millet). Chaque port a un UNLOCODE, des aliases AIS, et un role (export/import/both).
+- `src/data/grainList.js` : liste des 12 cereales avec cles GrainWatch, labels FR/EN, emoji.
+- `src/utils/portMatcher.js` : matching bidirectionnel destination AIS <-> alias port. `normalizeDestination()`, `matchShipToGrain()`, `getMatchingGrains()`. Tolere les abbreviations et le texte libre AIS.
+- `src/components/GrainSelector.jsx` : dropdown dark theme, 12 cereales + "Toutes", disclaimer sur l'approximation du filtrage. Positionne sous le HUD en top-left.
+- `src/stores/useShipStore.js` : ajout `selectedGrain` + `setSelectedGrain` au state.
+- `src/components/ShipMarkers.jsx` : filtrage `useMemo` sur `selectedGrain` — seuls les navires matchant la cereale selectionnee sont rendus en instances. Aucune instance detruite/recree, juste le count et les matrices mises a jour.
+- `src/components/HUD.jsx` : compteur filtre + badge cereale quand un filtre est actif.
+- `src/components/InfoPanel.jsx` : section "Cereales probables" — affiche toutes les cereales matchant la destination du navire selectionne.
+- `src/App.jsx` : lecture du parametre URL `?grain=xxx` au montage pour integration GrainWatch. Rendu du `<GrainSelector />` dans l'overlay.
+- `scripts/analyze-destinations.mjs` : outil standalone Node 22+ (WebSocket natif) pour identifier les destinations AIS non couvertes par `grainPorts.json`. Usage : `node scripts/analyze-destinations.mjs 120`.
+- Zero nouvelle dependance npm.
+
+## Maintenance de la base ports/cereales
+
+La base `src/data/grainPorts.json` est statique et doit etre enrichie periodiquement.
+
+### Procedure de mise a jour
+1. Lancer l'outil d'analyse : `node scripts/analyze-destinations.mjs 300` (5 minutes de collecte)
+2. Examiner le rapport : les destinations non couvertes les plus frequentes sont des candidats a l'ajout
+3. Pour chaque candidat, verifier s'il s'agit d'un port cerealier et quelles cereales y transitent
+4. Ajouter le port dans la section appropriee de `grainPorts.json` avec ses aliases
+5. Relancer l'analyse pour verifier l'amelioration du taux de couverture
+6. Commiter : `chore: enrichir grainPorts.json (+X ports)`
+
+### Frequence recommandee
+- Apres le deploiement initial : lancer 2-3 analyses sur des plages horaires differentes
+- Ensuite : une fois par mois ou apres modification du BoundingBox AIS
 
 ## Release v1.0.0 ✅ EN PLACE
 

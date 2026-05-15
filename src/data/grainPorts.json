@@ -1,0 +1,1083 @@
+{
+  "wheat": [
+    {
+      "name": "Rouen",
+      "unlocode": "FRROU",
+      "country": "FR",
+      "aliases": ["ROUEN", "ROU", "FRROU"],
+      "role": "export"
+    },
+    {
+      "name": "Dunkirk",
+      "unlocode": "FRDKK",
+      "country": "FR",
+      "aliases": ["DUNKIRK", "DUNKERQUE", "DKK", "FRDKK"],
+      "role": "export"
+    },
+    {
+      "name": "La Pallice",
+      "unlocode": "FRLPE",
+      "country": "FR",
+      "aliases": ["LA PALLICE", "PALLICE", "LPE", "FRLPE", "LA ROCHELLE"],
+      "role": "export"
+    },
+    {
+      "name": "Odessa",
+      "unlocode": "UAODS",
+      "country": "UA",
+      "aliases": ["ODESSA", "ODESA", "ODS", "UAODS"],
+      "role": "export"
+    },
+    {
+      "name": "Chornomorsk",
+      "unlocode": "UACHS",
+      "country": "UA",
+      "aliases": ["CHORNOMORSK", "CHORNOMORSKIY", "ILYICHEVSK", "ILLICHIVSK", "CHS", "UACHS"],
+      "role": "export"
+    },
+    {
+      "name": "Mykolaiv",
+      "unlocode": "UAMKL",
+      "country": "UA",
+      "aliases": ["MYKOLAIV", "NIKOLAEV", "MYKOLAYIV", "MKL", "UAMKL"],
+      "role": "export"
+    },
+    {
+      "name": "Novorossiysk",
+      "unlocode": "RUNVS",
+      "country": "RU",
+      "aliases": ["NOVOROSSIYSK", "NOVOROSSISK", "NOVO", "NVS", "RUNVS"],
+      "role": "export"
+    },
+    {
+      "name": "Houston",
+      "unlocode": "USHOU",
+      "country": "US",
+      "aliases": ["HOUSTON", "HOU", "USHOU"],
+      "role": "export"
+    },
+    {
+      "name": "Portland",
+      "unlocode": "USPDX",
+      "country": "US",
+      "aliases": ["PORTLAND", "PORTLAND OR", "PDX", "USPDX"],
+      "role": "export"
+    },
+    {
+      "name": "New Orleans",
+      "unlocode": "USMSY",
+      "country": "US",
+      "aliases": ["NEW ORLEANS", "NOLA", "GNO", "US GNO", "MSY", "USMSY", "NOLO"],
+      "role": "export"
+    },
+    {
+      "name": "Seattle",
+      "unlocode": "USSEA",
+      "country": "US",
+      "aliases": ["SEATTLE", "SEA", "USSEA"],
+      "role": "export"
+    },
+    {
+      "name": "Vancouver",
+      "unlocode": "CAVAN",
+      "country": "CA",
+      "aliases": ["VANCOUVER", "VAN", "CAVAN", "YVR"],
+      "role": "export"
+    },
+    {
+      "name": "Thunder Bay",
+      "unlocode": "CATBA",
+      "country": "CA",
+      "aliases": ["THUNDER BAY", "TBA", "CATBA"],
+      "role": "export"
+    },
+    {
+      "name": "Adelaide",
+      "unlocode": "AUADL",
+      "country": "AU",
+      "aliases": ["ADELAIDE", "ADL", "AUADL"],
+      "role": "export"
+    },
+    {
+      "name": "Fremantle",
+      "unlocode": "AUFRE",
+      "country": "AU",
+      "aliases": ["FREMANTLE", "FRE", "AUFRE"],
+      "role": "export"
+    },
+    {
+      "name": "Port Kembla",
+      "unlocode": "AUPKL",
+      "country": "AU",
+      "aliases": ["PORT KEMBLA", "KEMBLA", "PKL", "AUPKL"],
+      "role": "export"
+    },
+    {
+      "name": "Rosario",
+      "unlocode": "ARROS",
+      "country": "AR",
+      "aliases": ["ROSARIO", "ROS", "ARROS"],
+      "role": "export"
+    },
+    {
+      "name": "Bahia Blanca",
+      "unlocode": "ARBHI",
+      "country": "AR",
+      "aliases": ["BAHIA BLANCA", "BHI", "B BLANCA", "ARBHI"],
+      "role": "export"
+    },
+    {
+      "name": "Necochea",
+      "unlocode": "ARNEC",
+      "country": "AR",
+      "aliases": ["NECOCHEA", "QUEQUEN", "NEC", "ARNEC"],
+      "role": "export"
+    },
+    {
+      "name": "Santos",
+      "unlocode": "BRSSZ",
+      "country": "BR",
+      "aliases": ["SANTOS", "SSZ", "BRSSZ"],
+      "role": "export"
+    },
+    {
+      "name": "Paranagua",
+      "unlocode": "BRPNG",
+      "country": "BR",
+      "aliases": ["PARANAGUA", "PARANAGUÁ", "PNG", "BRPNG"],
+      "role": "export"
+    },
+    {
+      "name": "Alexandria",
+      "unlocode": "EGALY",
+      "country": "EG",
+      "aliases": ["ALEXANDRIA", "ALEX", "ALY", "EGALY"],
+      "role": "import"
+    },
+    {
+      "name": "Damietta",
+      "unlocode": "EGDAM",
+      "country": "EG",
+      "aliases": ["DAMIETTA", "DUMYAT", "DAM", "EGDAM"],
+      "role": "import"
+    },
+    {
+      "name": "Casablanca",
+      "unlocode": "MACAS",
+      "country": "MA",
+      "aliases": ["CASABLANCA", "CASA", "CAS", "MACAS"],
+      "role": "import"
+    },
+    {
+      "name": "Algiers",
+      "unlocode": "DZALG",
+      "country": "DZ",
+      "aliases": ["ALGIERS", "ALGER", "ALG", "DZALG"],
+      "role": "import"
+    },
+    {
+      "name": "Lagos",
+      "unlocode": "NGLOS",
+      "country": "NG",
+      "aliases": ["LAGOS", "LOS", "NGLOS"],
+      "role": "import"
+    },
+    {
+      "name": "Apapa",
+      "unlocode": "NGAPP",
+      "country": "NG",
+      "aliases": ["APAPA", "APP", "NGAPP"],
+      "role": "import"
+    },
+    {
+      "name": "Mombasa",
+      "unlocode": "KEMBA",
+      "country": "KE",
+      "aliases": ["MOMBASA", "MBA", "KEMBA"],
+      "role": "import"
+    },
+    {
+      "name": "Jakarta",
+      "unlocode": "IDJKT",
+      "country": "ID",
+      "aliases": ["JAKARTA", "JKT", "TANJUNG PRIOK", "IDJKT"],
+      "role": "import"
+    },
+    {
+      "name": "Surabaya",
+      "unlocode": "IDSUB",
+      "country": "ID",
+      "aliases": ["SURABAYA", "SUB", "IDSUB"],
+      "role": "import"
+    },
+    {
+      "name": "Manila",
+      "unlocode": "PHMNL",
+      "country": "PH",
+      "aliases": ["MANILA", "MNL", "PHMNL"],
+      "role": "import"
+    },
+    {
+      "name": "Yokohama",
+      "unlocode": "JPYOK",
+      "country": "JP",
+      "aliases": ["YOKOHAMA", "YOK", "JPYOK"],
+      "role": "import"
+    },
+    {
+      "name": "Nagoya",
+      "unlocode": "JPNGO",
+      "country": "JP",
+      "aliases": ["NAGOYA", "NGO", "JPNGO"],
+      "role": "import"
+    },
+    {
+      "name": "Incheon",
+      "unlocode": "KRINC",
+      "country": "KR",
+      "aliases": ["INCHEON", "INCHON", "INC", "KRINC"],
+      "role": "import"
+    },
+    {
+      "name": "Busan",
+      "unlocode": "KRPUS",
+      "country": "KR",
+      "aliases": ["BUSAN", "PUSAN", "PUS", "KRPUS"],
+      "role": "import"
+    },
+    {
+      "name": "Jeddah",
+      "unlocode": "SAJED",
+      "country": "SA",
+      "aliases": ["JEDDAH", "JIDDAH", "JEDDA", "JED", "SAJED"],
+      "role": "import"
+    },
+    {
+      "name": "Bandar Imam Khomeini",
+      "unlocode": "IRBIK",
+      "country": "IR",
+      "aliases": ["BANDAR IMAM KHOMEINI", "BIK", "IMAM KHOMEINI", "IRBIK", "BANDAR IMAM"],
+      "role": "import"
+    }
+  ],
+  "corn": [
+    {
+      "name": "Santos",
+      "unlocode": "BRSSZ",
+      "country": "BR",
+      "aliases": ["SANTOS", "SSZ", "BRSSZ"],
+      "role": "export"
+    },
+    {
+      "name": "Paranagua",
+      "unlocode": "BRPNG",
+      "country": "BR",
+      "aliases": ["PARANAGUA", "PARANAGUÁ", "PNG", "BRPNG"],
+      "role": "export"
+    },
+    {
+      "name": "New Orleans",
+      "unlocode": "USMSY",
+      "country": "US",
+      "aliases": ["NEW ORLEANS", "NOLA", "GNO", "US GNO", "MSY", "USMSY", "NOLO"],
+      "role": "export"
+    },
+    {
+      "name": "Houston",
+      "unlocode": "USHOU",
+      "country": "US",
+      "aliases": ["HOUSTON", "HOU", "USHOU"],
+      "role": "export"
+    },
+    {
+      "name": "Baltimore",
+      "unlocode": "USBAL",
+      "country": "US",
+      "aliases": ["BALTIMORE", "BAL", "USBAL"],
+      "role": "export"
+    },
+    {
+      "name": "Rosario",
+      "unlocode": "ARROS",
+      "country": "AR",
+      "aliases": ["ROSARIO", "ROS", "ARROS"],
+      "role": "export"
+    },
+    {
+      "name": "Bahia Blanca",
+      "unlocode": "ARBHI",
+      "country": "AR",
+      "aliases": ["BAHIA BLANCA", "BHI", "B BLANCA", "ARBHI"],
+      "role": "export"
+    },
+    {
+      "name": "Constanta",
+      "unlocode": "ROCND",
+      "country": "RO",
+      "aliases": ["CONSTANTA", "CONSTANȚA", "CONSTANTZA", "CND", "ROCND"],
+      "role": "export"
+    },
+    {
+      "name": "Odessa",
+      "unlocode": "UAODS",
+      "country": "UA",
+      "aliases": ["ODESSA", "ODESA", "ODS", "UAODS"],
+      "role": "export"
+    },
+    {
+      "name": "Incheon",
+      "unlocode": "KRINC",
+      "country": "KR",
+      "aliases": ["INCHEON", "INCHON", "INC", "KRINC"],
+      "role": "import"
+    },
+    {
+      "name": "Yokohama",
+      "unlocode": "JPYOK",
+      "country": "JP",
+      "aliases": ["YOKOHAMA", "YOK", "JPYOK"],
+      "role": "import"
+    },
+    {
+      "name": "Alexandria",
+      "unlocode": "EGALY",
+      "country": "EG",
+      "aliases": ["ALEXANDRIA", "ALEX", "ALY", "EGALY"],
+      "role": "import"
+    },
+    {
+      "name": "Veracruz",
+      "unlocode": "MXVER",
+      "country": "MX",
+      "aliases": ["VERACRUZ", "VER", "MXVER"],
+      "role": "import"
+    },
+    {
+      "name": "Dalian",
+      "unlocode": "CNDLC",
+      "country": "CN",
+      "aliases": ["DALIAN", "DLC", "CNDLC"],
+      "role": "import"
+    }
+  ],
+  "rice": [
+    {
+      "name": "Bangkok",
+      "unlocode": "THBKK",
+      "country": "TH",
+      "aliases": ["BANGKOK", "BKK", "THBKK", "KLONG TOEY"],
+      "role": "export"
+    },
+    {
+      "name": "Laem Chabang",
+      "unlocode": "THLCH",
+      "country": "TH",
+      "aliases": ["LAEM CHABANG", "LCH", "THLCH", "LEAM CHABANG"],
+      "role": "export"
+    },
+    {
+      "name": "Ho Chi Minh City",
+      "unlocode": "VNSGN",
+      "country": "VN",
+      "aliases": ["HO CHI MINH", "HOCHIMINH", "HCMC", "SAIGON", "SGN", "VNSGN", "CAT LAI"],
+      "role": "export"
+    },
+    {
+      "name": "Hai Phong",
+      "unlocode": "VNHPH",
+      "country": "VN",
+      "aliases": ["HAI PHONG", "HAIPHONG", "HPH", "VNHPH"],
+      "role": "export"
+    },
+    {
+      "name": "Kakinada",
+      "unlocode": "INKAK",
+      "country": "IN",
+      "aliases": ["KAKINADA", "KAK", "INKAK"],
+      "role": "export"
+    },
+    {
+      "name": "Nhava Sheva",
+      "unlocode": "INNSA",
+      "country": "IN",
+      "aliases": ["NHAVA SHEVA", "JNPT", "JAWAHARLAL NEHRU", "NSA", "INNSA", "NAVA SHEVA"],
+      "role": "export"
+    },
+    {
+      "name": "Kandla",
+      "unlocode": "INIXY",
+      "country": "IN",
+      "aliases": ["KANDLA", "DEENDAYAL", "IXY", "INIXY"],
+      "role": "export"
+    },
+    {
+      "name": "Yangon",
+      "unlocode": "MMRGN",
+      "country": "MM",
+      "aliases": ["YANGON", "RANGOON", "RGN", "MMRGN"],
+      "role": "export"
+    },
+    {
+      "name": "Cotonou",
+      "unlocode": "BJCOO",
+      "country": "BJ",
+      "aliases": ["COTONOU", "COO", "BJCOO"],
+      "role": "import"
+    },
+    {
+      "name": "Lagos",
+      "unlocode": "NGLOS",
+      "country": "NG",
+      "aliases": ["LAGOS", "LOS", "NGLOS"],
+      "role": "import"
+    },
+    {
+      "name": "Abidjan",
+      "unlocode": "CIABJ",
+      "country": "CI",
+      "aliases": ["ABIDJAN", "ABJ", "CIABJ"],
+      "role": "import"
+    },
+    {
+      "name": "Dakar",
+      "unlocode": "SNDKR",
+      "country": "SN",
+      "aliases": ["DAKAR", "DKR", "SNDKR"],
+      "role": "import"
+    },
+    {
+      "name": "Manila",
+      "unlocode": "PHMNL",
+      "country": "PH",
+      "aliases": ["MANILA", "MNL", "PHMNL"],
+      "role": "import"
+    },
+    {
+      "name": "Chittagong",
+      "unlocode": "BDCGP",
+      "country": "BD",
+      "aliases": ["CHITTAGONG", "CHATTOGRAM", "CGP", "BDCGP"],
+      "role": "import"
+    }
+  ],
+  "soybean": [
+    {
+      "name": "Santos",
+      "unlocode": "BRSSZ",
+      "country": "BR",
+      "aliases": ["SANTOS", "SSZ", "BRSSZ"],
+      "role": "export"
+    },
+    {
+      "name": "Paranagua",
+      "unlocode": "BRPNG",
+      "country": "BR",
+      "aliases": ["PARANAGUA", "PARANAGUÁ", "PNG", "BRPNG"],
+      "role": "export"
+    },
+    {
+      "name": "Rio Grande",
+      "unlocode": "BRRIG",
+      "country": "BR",
+      "aliases": ["RIO GRANDE", "RIG", "BRRIG"],
+      "role": "export"
+    },
+    {
+      "name": "New Orleans",
+      "unlocode": "USMSY",
+      "country": "US",
+      "aliases": ["NEW ORLEANS", "NOLA", "GNO", "US GNO", "MSY", "USMSY", "NOLO"],
+      "role": "export"
+    },
+    {
+      "name": "Houston",
+      "unlocode": "USHOU",
+      "country": "US",
+      "aliases": ["HOUSTON", "HOU", "USHOU"],
+      "role": "export"
+    },
+    {
+      "name": "Portland",
+      "unlocode": "USPDX",
+      "country": "US",
+      "aliases": ["PORTLAND", "PORTLAND OR", "PDX", "USPDX"],
+      "role": "export"
+    },
+    {
+      "name": "Rosario",
+      "unlocode": "ARROS",
+      "country": "AR",
+      "aliases": ["ROSARIO", "ROS", "ARROS"],
+      "role": "export"
+    },
+    {
+      "name": "Bahia Blanca",
+      "unlocode": "ARBHI",
+      "country": "AR",
+      "aliases": ["BAHIA BLANCA", "BHI", "B BLANCA", "ARBHI"],
+      "role": "export"
+    },
+    {
+      "name": "Dalian",
+      "unlocode": "CNDLC",
+      "country": "CN",
+      "aliases": ["DALIAN", "DLC", "CNDLC"],
+      "role": "import"
+    },
+    {
+      "name": "Nantong",
+      "unlocode": "CNNTG",
+      "country": "CN",
+      "aliases": ["NANTONG", "NTG", "CNNTG"],
+      "role": "import"
+    },
+    {
+      "name": "Rizhao",
+      "unlocode": "CNRZH",
+      "country": "CN",
+      "aliases": ["RIZHAO", "RZH", "CNRZH"],
+      "role": "import"
+    },
+    {
+      "name": "Amsterdam",
+      "unlocode": "NLAMS",
+      "country": "NL",
+      "aliases": ["AMSTERDAM", "AMS", "NLAMS"],
+      "role": "import"
+    },
+    {
+      "name": "Rotterdam",
+      "unlocode": "NLRTM",
+      "country": "NL",
+      "aliases": ["ROTTERDAM", "RTM", "NLRTM", "EUROPOORT"],
+      "role": "import"
+    },
+    {
+      "name": "Incheon",
+      "unlocode": "KRINC",
+      "country": "KR",
+      "aliases": ["INCHEON", "INCHON", "INC", "KRINC"],
+      "role": "import"
+    }
+  ],
+  "sugar": [
+    {
+      "name": "Santos",
+      "unlocode": "BRSSZ",
+      "country": "BR",
+      "aliases": ["SANTOS", "SSZ", "BRSSZ"],
+      "role": "export"
+    },
+    {
+      "name": "Paranagua",
+      "unlocode": "BRPNG",
+      "country": "BR",
+      "aliases": ["PARANAGUA", "PARANAGUÁ", "PNG", "BRPNG"],
+      "role": "export"
+    },
+    {
+      "name": "Maceio",
+      "unlocode": "BRMCZ",
+      "country": "BR",
+      "aliases": ["MACEIO", "MACEIÓ", "MCZ", "BRMCZ"],
+      "role": "export"
+    },
+    {
+      "name": "Recife",
+      "unlocode": "BRREC",
+      "country": "BR",
+      "aliases": ["RECIFE", "REC", "BRREC"],
+      "role": "export"
+    },
+    {
+      "name": "Durban",
+      "unlocode": "ZADUR",
+      "country": "ZA",
+      "aliases": ["DURBAN", "DUR", "ZADUR"],
+      "role": "export"
+    },
+    {
+      "name": "Veracruz",
+      "unlocode": "MXVER",
+      "country": "MX",
+      "aliases": ["VERACRUZ", "VER", "MXVER"],
+      "role": "export"
+    },
+    {
+      "name": "Nhava Sheva",
+      "unlocode": "INNSA",
+      "country": "IN",
+      "aliases": ["NHAVA SHEVA", "JNPT", "JAWAHARLAL NEHRU", "NSA", "INNSA", "NAVA SHEVA"],
+      "role": "export"
+    },
+    {
+      "name": "Kandla",
+      "unlocode": "INIXY",
+      "country": "IN",
+      "aliases": ["KANDLA", "DEENDAYAL", "IXY", "INIXY"],
+      "role": "export"
+    },
+    {
+      "name": "Bangkok",
+      "unlocode": "THBKK",
+      "country": "TH",
+      "aliases": ["BANGKOK", "BKK", "THBKK"],
+      "role": "export"
+    },
+    {
+      "name": "Surabaya",
+      "unlocode": "IDSUB",
+      "country": "ID",
+      "aliases": ["SURABAYA", "SUB", "IDSUB"],
+      "role": "export"
+    },
+    {
+      "name": "Tanjung Priok",
+      "unlocode": "IDTPP",
+      "country": "ID",
+      "aliases": ["TANJUNG PRIOK", "TG PRIOK", "TPP", "IDTPP", "PRIOK"],
+      "role": "export"
+    },
+    {
+      "name": "Casablanca",
+      "unlocode": "MACAS",
+      "country": "MA",
+      "aliases": ["CASABLANCA", "CASA", "CAS", "MACAS"],
+      "role": "import"
+    },
+    {
+      "name": "Lagos",
+      "unlocode": "NGLOS",
+      "country": "NG",
+      "aliases": ["LAGOS", "LOS", "NGLOS"],
+      "role": "import"
+    }
+  ],
+  "barley": [
+    {
+      "name": "Rouen",
+      "unlocode": "FRROU",
+      "country": "FR",
+      "aliases": ["ROUEN", "ROU", "FRROU"],
+      "role": "export"
+    },
+    {
+      "name": "La Pallice",
+      "unlocode": "FRLPE",
+      "country": "FR",
+      "aliases": ["LA PALLICE", "PALLICE", "LPE", "FRLPE", "LA ROCHELLE"],
+      "role": "export"
+    },
+    {
+      "name": "Adelaide",
+      "unlocode": "AUADL",
+      "country": "AU",
+      "aliases": ["ADELAIDE", "ADL", "AUADL"],
+      "role": "export"
+    },
+    {
+      "name": "Port Kembla",
+      "unlocode": "AUPKL",
+      "country": "AU",
+      "aliases": ["PORT KEMBLA", "KEMBLA", "PKL", "AUPKL"],
+      "role": "export"
+    },
+    {
+      "name": "Vancouver",
+      "unlocode": "CAVAN",
+      "country": "CA",
+      "aliases": ["VANCOUVER", "VAN", "CAVAN", "YVR"],
+      "role": "export"
+    },
+    {
+      "name": "Odessa",
+      "unlocode": "UAODS",
+      "country": "UA",
+      "aliases": ["ODESSA", "ODESA", "ODS", "UAODS"],
+      "role": "export"
+    },
+    {
+      "name": "Novorossiysk",
+      "unlocode": "RUNVS",
+      "country": "RU",
+      "aliases": ["NOVOROSSIYSK", "NOVOROSSISK", "NOVO", "NVS", "RUNVS"],
+      "role": "export"
+    },
+    {
+      "name": "Jeddah",
+      "unlocode": "SAJED",
+      "country": "SA",
+      "aliases": ["JEDDAH", "JIDDAH", "JEDDA", "JED", "SAJED"],
+      "role": "import"
+    },
+    {
+      "name": "Bandar Imam Khomeini",
+      "unlocode": "IRBIK",
+      "country": "IR",
+      "aliases": ["BANDAR IMAM KHOMEINI", "BIK", "IMAM KHOMEINI", "IRBIK", "BANDAR IMAM"],
+      "role": "import"
+    },
+    {
+      "name": "Tianjin",
+      "unlocode": "CNTSN",
+      "country": "CN",
+      "aliases": ["TIANJIN", "XINGANG", "TSN", "CNTSN"],
+      "role": "import"
+    },
+    {
+      "name": "Dalian",
+      "unlocode": "CNDLC",
+      "country": "CN",
+      "aliases": ["DALIAN", "DLC", "CNDLC"],
+      "role": "import"
+    },
+    {
+      "name": "Casablanca",
+      "unlocode": "MACAS",
+      "country": "MA",
+      "aliases": ["CASABLANCA", "CASA", "CAS", "MACAS"],
+      "role": "import"
+    }
+  ],
+  "oats": [
+    {
+      "name": "Thunder Bay",
+      "unlocode": "CATBA",
+      "country": "CA",
+      "aliases": ["THUNDER BAY", "TBA", "CATBA"],
+      "role": "export"
+    },
+    {
+      "name": "Vancouver",
+      "unlocode": "CAVAN",
+      "country": "CA",
+      "aliases": ["VANCOUVER", "VAN", "CAVAN", "YVR"],
+      "role": "export"
+    },
+    {
+      "name": "Helsinki",
+      "unlocode": "FIHEL",
+      "country": "FI",
+      "aliases": ["HELSINKI", "HEL", "FIHEL", "HELSINGFORS"],
+      "role": "export"
+    },
+    {
+      "name": "Kotka",
+      "unlocode": "FIKTK",
+      "country": "FI",
+      "aliases": ["KOTKA", "KTK", "FIKTK"],
+      "role": "export"
+    },
+    {
+      "name": "Gothenburg",
+      "unlocode": "SEGOT",
+      "country": "SE",
+      "aliases": ["GOTHENBURG", "GOTEBORG", "GÖTEBORG", "GOT", "SEGOT"],
+      "role": "export"
+    },
+    {
+      "name": "Portland",
+      "unlocode": "USPDX",
+      "country": "US",
+      "aliases": ["PORTLAND", "PORTLAND OR", "PDX", "USPDX"],
+      "role": "export"
+    },
+    {
+      "name": "Adelaide",
+      "unlocode": "AUADL",
+      "country": "AU",
+      "aliases": ["ADELAIDE", "ADL", "AUADL"],
+      "role": "export"
+    }
+  ],
+  "sorghum": [
+    {
+      "name": "Houston",
+      "unlocode": "USHOU",
+      "country": "US",
+      "aliases": ["HOUSTON", "HOU", "USHOU"],
+      "role": "export"
+    },
+    {
+      "name": "New Orleans",
+      "unlocode": "USMSY",
+      "country": "US",
+      "aliases": ["NEW ORLEANS", "NOLA", "GNO", "US GNO", "MSY", "USMSY", "NOLO"],
+      "role": "export"
+    },
+    {
+      "name": "Corpus Christi",
+      "unlocode": "USCRP",
+      "country": "US",
+      "aliases": ["CORPUS CHRISTI", "CRP", "USCRP", "CC"],
+      "role": "export"
+    },
+    {
+      "name": "Rosario",
+      "unlocode": "ARROS",
+      "country": "AR",
+      "aliases": ["ROSARIO", "ROS", "ARROS"],
+      "role": "export"
+    },
+    {
+      "name": "Dalian",
+      "unlocode": "CNDLC",
+      "country": "CN",
+      "aliases": ["DALIAN", "DLC", "CNDLC"],
+      "role": "import"
+    },
+    {
+      "name": "Guangzhou",
+      "unlocode": "CNCAN",
+      "country": "CN",
+      "aliases": ["GUANGZHOU", "CANTON", "CAN", "CNCAN"],
+      "role": "import"
+    },
+    {
+      "name": "Lagos",
+      "unlocode": "NGLOS",
+      "country": "NG",
+      "aliases": ["LAGOS", "LOS", "NGLOS"],
+      "role": "import"
+    },
+    {
+      "name": "Durban",
+      "unlocode": "ZADUR",
+      "country": "ZA",
+      "aliases": ["DURBAN", "DUR", "ZADUR"],
+      "role": "import"
+    },
+    {
+      "name": "Mombasa",
+      "unlocode": "KEMBA",
+      "country": "KE",
+      "aliases": ["MOMBASA", "MBA", "KEMBA"],
+      "role": "import"
+    }
+  ],
+  "rapeseed": [
+    {
+      "name": "Vancouver",
+      "unlocode": "CAVAN",
+      "country": "CA",
+      "aliases": ["VANCOUVER", "VAN", "CAVAN", "YVR"],
+      "role": "export"
+    },
+    {
+      "name": "Prince Rupert",
+      "unlocode": "CAPRR",
+      "country": "CA",
+      "aliases": ["PRINCE RUPERT", "PRR", "CAPRR", "PR RUPERT"],
+      "role": "export"
+    },
+    {
+      "name": "Rouen",
+      "unlocode": "FRROU",
+      "country": "FR",
+      "aliases": ["ROUEN", "ROU", "FRROU"],
+      "role": "export"
+    },
+    {
+      "name": "Dunkirk",
+      "unlocode": "FRDKK",
+      "country": "FR",
+      "aliases": ["DUNKIRK", "DUNKERQUE", "DKK", "FRDKK"],
+      "role": "export"
+    },
+    {
+      "name": "Hamburg",
+      "unlocode": "DEHAM",
+      "country": "DE",
+      "aliases": ["HAMBURG", "HAM", "DEHAM"],
+      "role": "both"
+    },
+    {
+      "name": "Nantong",
+      "unlocode": "CNNTG",
+      "country": "CN",
+      "aliases": ["NANTONG", "NTG", "CNNTG"],
+      "role": "import"
+    },
+    {
+      "name": "Rizhao",
+      "unlocode": "CNRZH",
+      "country": "CN",
+      "aliases": ["RIZHAO", "RZH", "CNRZH"],
+      "role": "import"
+    },
+    {
+      "name": "Nhava Sheva",
+      "unlocode": "INNSA",
+      "country": "IN",
+      "aliases": ["NHAVA SHEVA", "JNPT", "JAWAHARLAL NEHRU", "NSA", "INNSA", "NAVA SHEVA"],
+      "role": "import"
+    },
+    {
+      "name": "Yokohama",
+      "unlocode": "JPYOK",
+      "country": "JP",
+      "aliases": ["YOKOHAMA", "YOK", "JPYOK"],
+      "role": "import"
+    }
+  ],
+  "groundnut": [
+    {
+      "name": "Dakar",
+      "unlocode": "SNDKR",
+      "country": "SN",
+      "aliases": ["DAKAR", "DKR", "SNDKR"],
+      "role": "export"
+    },
+    {
+      "name": "Lagos",
+      "unlocode": "NGLOS",
+      "country": "NG",
+      "aliases": ["LAGOS", "LOS", "NGLOS"],
+      "role": "export"
+    },
+    {
+      "name": "Nhava Sheva",
+      "unlocode": "INNSA",
+      "country": "IN",
+      "aliases": ["NHAVA SHEVA", "JNPT", "JAWAHARLAL NEHRU", "NSA", "INNSA", "NAVA SHEVA"],
+      "role": "export"
+    },
+    {
+      "name": "Kandla",
+      "unlocode": "INIXY",
+      "country": "IN",
+      "aliases": ["KANDLA", "DEENDAYAL", "IXY", "INIXY"],
+      "role": "export"
+    },
+    {
+      "name": "Ho Chi Minh City",
+      "unlocode": "VNSGN",
+      "country": "VN",
+      "aliases": ["HO CHI MINH", "HOCHIMINH", "HCMC", "SAIGON", "SGN", "VNSGN", "CAT LAI"],
+      "role": "export"
+    },
+    {
+      "name": "Qingdao",
+      "unlocode": "CNTAO",
+      "country": "CN",
+      "aliases": ["QINGDAO", "TSINGTAO", "TAO", "CNTAO"],
+      "role": "import"
+    },
+    {
+      "name": "Rotterdam",
+      "unlocode": "NLRTM",
+      "country": "NL",
+      "aliases": ["ROTTERDAM", "RTM", "NLRTM", "EUROPOORT"],
+      "role": "import"
+    }
+  ],
+  "lentils": [
+    {
+      "name": "Vancouver",
+      "unlocode": "CAVAN",
+      "country": "CA",
+      "aliases": ["VANCOUVER", "VAN", "CAVAN", "YVR"],
+      "role": "export"
+    },
+    {
+      "name": "Montreal",
+      "unlocode": "CAMTR",
+      "country": "CA",
+      "aliases": ["MONTREAL", "MTR", "CAMTR", "MONTRÉAL"],
+      "role": "export"
+    },
+    {
+      "name": "Nhava Sheva",
+      "unlocode": "INNSA",
+      "country": "IN",
+      "aliases": ["NHAVA SHEVA", "JNPT", "JAWAHARLAL NEHRU", "NSA", "INNSA", "NAVA SHEVA"],
+      "role": "import"
+    },
+    {
+      "name": "Kolkata",
+      "unlocode": "INCCU",
+      "country": "IN",
+      "aliases": ["KOLKATA", "CALCUTTA", "CCU", "INCCU"],
+      "role": "import"
+    },
+    {
+      "name": "Kandla",
+      "unlocode": "INIXY",
+      "country": "IN",
+      "aliases": ["KANDLA", "DEENDAYAL", "IXY", "INIXY"],
+      "role": "import"
+    },
+    {
+      "name": "Karachi",
+      "unlocode": "PKKHI",
+      "country": "PK",
+      "aliases": ["KARACHI", "KHI", "PKKHI"],
+      "role": "import"
+    },
+    {
+      "name": "Mersin",
+      "unlocode": "TRMER",
+      "country": "TR",
+      "aliases": ["MERSIN", "ICEL", "MER", "TRMER"],
+      "role": "import"
+    },
+    {
+      "name": "Colombo",
+      "unlocode": "LKCMB",
+      "country": "LK",
+      "aliases": ["COLOMBO", "CMB", "LKCMB"],
+      "role": "import"
+    },
+    {
+      "name": "Chittagong",
+      "unlocode": "BDCGP",
+      "country": "BD",
+      "aliases": ["CHITTAGONG", "CHATTOGRAM", "CGP", "BDCGP"],
+      "role": "import"
+    }
+  ],
+  "millet": [
+    {
+      "name": "Nhava Sheva",
+      "unlocode": "INNSA",
+      "country": "IN",
+      "aliases": ["NHAVA SHEVA", "JNPT", "JAWAHARLAL NEHRU", "NSA", "INNSA", "NAVA SHEVA"],
+      "role": "export"
+    },
+    {
+      "name": "Kandla",
+      "unlocode": "INIXY",
+      "country": "IN",
+      "aliases": ["KANDLA", "DEENDAYAL", "IXY", "INIXY"],
+      "role": "export"
+    },
+    {
+      "name": "Dakar",
+      "unlocode": "SNDKR",
+      "country": "SN",
+      "aliases": ["DAKAR", "DKR", "SNDKR"],
+      "role": "both"
+    },
+    {
+      "name": "Lagos",
+      "unlocode": "NGLOS",
+      "country": "NG",
+      "aliases": ["LAGOS", "LOS", "NGLOS"],
+      "role": "both"
+    },
+    {
+      "name": "Djibouti",
+      "unlocode": "DJJIB",
+      "country": "DJ",
+      "aliases": ["DJIBOUTI", "JIB", "DJJIB"],
+      "role": "import"
+    },
+    {
+      "name": "Aden",
+      "unlocode": "YEADE",
+      "country": "YE",
+      "aliases": ["ADEN", "ADE", "YEADE"],
+      "role": "import"
+    }
+  ]
+}

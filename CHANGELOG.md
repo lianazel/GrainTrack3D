@@ -4,6 +4,32 @@ All notable changes to GrainTrack3D are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.0] — 2026-05-15
+
+Étape 6 : filtre céréales par port de destination AIS.
+
+### Added
+
+- **Grain filter** — dropdown selector with 12 grains (wheat, corn, rice, soybean, sugar, barley, oats, sorghum, rapeseed, groundnut, lentils, millet) and a "Toutes les céréales" option to display all vessels
+- **Port database** — `src/data/grainPorts.json` with ~130 worldwide ports mapped to grain commodities (UNLOCODE, country, aliases, role: export/import/both)
+- **Bidirectional destination matching** — `src/utils/portMatcher.js` normalizes AIS destination strings and matches against port aliases, tolerant of abbreviations and free-text
+- **HUD enhancement** — filtered vessel count and active grain badge when a filter is selected
+- **InfoPanel "Céréales probables" section** — lists all grain commodities matching the selected vessel's destination
+- **URL parameter `?grain=xxx`** — pre-selects the grain filter on load for integration with GrainWatch
+- **Maintenance tool** — `scripts/analyze-destinations.mjs` (Node 22+ native WebSocket) connects to AIS, collects bulk-carrier destinations, and reports coverage rate plus uncovered destinations as candidates to enrich `grainPorts.json`
+
+### Changed
+
+- `src/stores/useShipStore.js` — added `selectedGrain` state and `setSelectedGrain` action
+- `src/components/ShipMarkers.jsx` — instanced rendering now iterates over a `useMemo` filtered list; no instance churn, only matrices and `count` updated
+- `src/App.jsx` — reads `?grain=xxx` URL parameter at mount and renders the `<GrainSelector />` overlay
+
+### Notes
+
+- Zero new npm dependencies — pure client-side filtering on existing store data
+- AIS `destination` is free-text typed by crews, so matching is approximate by design (false negatives are acceptable)
+- Default behavior preserved: with no filter and no URL parameter, all vessels are displayed
+
 ## [1.0.0] — 2026-05-13
 
 First public release. Real-time 3D tracking of bulk carrier vessels, deployed on Vercel.

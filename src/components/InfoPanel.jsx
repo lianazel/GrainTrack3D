@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useShipStore } from '../stores/useShipStore'
+import { getMatchingGrains } from '../utils/portMatcher'
+import { GRAIN_BY_KEY } from '../data/grainList'
 
 const fmtNumber = (v, digits = 1, unit = '') =>
   Number.isFinite(v) ? `${v.toFixed(digits)}${unit}` : '—'
@@ -26,6 +28,11 @@ export default function InfoPanel() {
 
   const open = !!ship
   const display = ship ?? lastShip
+
+  const matchingGrains = useMemo(
+    () => (display ? getMatchingGrains(display) : []),
+    [display],
+  )
 
   return (
     <aside className={`info-panel ${open ? 'open' : ''}`} aria-hidden={!open}>
@@ -73,6 +80,22 @@ export default function InfoPanel() {
               <dd>{fmtTime(display.lastSeen)}</dd>
             </div>
           </dl>
+
+          {matchingGrains.length > 0 && (
+            <div className="info-panel-grains">
+              <h3 className="info-panel-grains-title">Cereales probables</h3>
+              <div className="info-panel-grains-list">
+                {matchingGrains.map((key) => {
+                  const g = GRAIN_BY_KEY[key]
+                  return g ? (
+                    <span key={key} className="grain-match">
+                      {g.emoji} {g.labelFr}
+                    </span>
+                  ) : null
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </aside>

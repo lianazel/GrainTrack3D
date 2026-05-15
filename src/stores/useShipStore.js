@@ -8,10 +8,13 @@ export const useShipStore = create(
     blacklist: new Set(),
     connectionStatus: 'idle',
     selectedMMSI: null,
+    selectedGrain: null,
 
     setConnectionStatus: (status) => set({ connectionStatus: status }),
 
     setSelectedMMSI: (mmsi) => set({ selectedMMSI: mmsi }),
+
+    setSelectedGrain: (grain) => set({ selectedGrain: grain }),
 
     applyBatch: ({ positions, statics }) => {
       const { ships, pendingPositions, blacklist } = get()

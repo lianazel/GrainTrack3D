@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { useShipStore } from '../stores/useShipStore'
 import { GLOBE_RADIUS, latLonToVector3 } from '../utils/geoUtils'
+import { matchShipToGrain } from '../utils/portMatcher'
 
 const MAX_INSTANCES = 5000
 const MARKER_RADIUS = GLOBE_RADIUS * 1.005
@@ -43,18 +44,24 @@ function instancedHitboxRaycast(raycaster, intersects) {
 
 export default function ShipMarkers() {
   const ships = useShipStore((s) => s.ships)
+  const selectedGrain = useShipStore((s) => s.selectedGrain)
   const setSelected = useShipStore((s) => s.setSelectedMMSI)
   const meshRef = useRef(null)
   const mmsiByIndexRef = useRef([])
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const vec = useMemo(() => new THREE.Vector3(), [])
 
+  const visibleShips = useMemo(() => {
+    if (!selectedGrain) return [...ships.values()]
+    return [...ships.values()].filter((ship) => matchShipToGrain(ship, selectedGrain))
+  }, [ships, selectedGrain])
+
   useLayoutEffect(() => {
     const mesh = meshRef.current
     if (!mesh) return
     const map = mmsiByIndexRef.current
     let i = 0
-    for (const ship of ships.values()) {
+    for (const ship of visibleShips) {
       if (i >= MAX_INSTANCES) break
       if (!Number.isFinite(ship.lat) || !Number.isFinite(ship.lon)) continue
       latLonToVector3(ship.lat, ship.lon, MARKER_RADIUS, vec)
@@ -67,7 +74,7 @@ export default function ShipMarkers() {
     map.length = i
     mesh.count = i
     mesh.instanceMatrix.needsUpdate = true
-  }, [ships, dummy, vec])
+  }, [visibleShips, dummy, vec])
 
   const handleClick = (e) => {
     if (e.instanceId == null) return
