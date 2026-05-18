@@ -6,6 +6,10 @@ import { GRAIN_BY_KEY } from '../data/grainList'
 const fmtNumber = (v, digits = 1, unit = '') =>
   Number.isFinite(v) ? `${v.toFixed(digits)}${unit}` : '—'
 
+// Mapping confidence -> opacite du badge cereale.
+// Source de verite : voir computeConfidence() dans portMatcher.js.
+const CONFIDENCE_OPACITY = { high: 1, medium: 0.7, low: 0.4 }
+
 const fmtTime = (ms) => {
   if (!Number.isFinite(ms)) return '—'
   try {
@@ -85,10 +89,14 @@ export default function InfoPanel() {
             <div className="info-panel-grains">
               <h3 className="info-panel-grains-title">Cereales probables</h3>
               <div className="info-panel-grains-list">
-                {matchingGrains.map((key) => {
-                  const g = GRAIN_BY_KEY[key]
+                {matchingGrains.map(({ grainKey, confidence }) => {
+                  const g = GRAIN_BY_KEY[grainKey]
                   return g ? (
-                    <span key={key} className="grain-match">
+                    <span
+                      key={grainKey}
+                      className="grain-match"
+                      style={{ opacity: CONFIDENCE_OPACITY[confidence] }}
+                    >
                       {g.emoji} {g.labelFr}
                     </span>
                   ) : null

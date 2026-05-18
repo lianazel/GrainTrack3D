@@ -24,8 +24,9 @@ export function getPortsForGrain(grainKey) {
 }
 
 /**
- * Teste si la destination AIS d'un navire correspond a un port connu
- * pour la cereale specifiee.
+ * Recherche le premier port (et alias) qui matche la destination d'un navire
+ * pour la cereale specifiee. Helper interne mutualise par matchShipToGrain
+ * et getMatchingGrains.
  *
  * Strategie de matching (bidirectionnelle) :
  * - normalise destination ET chaque alias
@@ -34,13 +35,13 @@ export function getPortsForGrain(grainKey) {
  * - Ignore les alias de 2 caracteres ou moins pour eviter les faux positifs
  *   (sauf si la destination normalisee fait elle-meme 2-3 caracteres — cas des codes courts)
  *
- * @param {Object} ship - objet navire du store ({ destination, ... })
+ * @param {Object} ship - objet navire du store
  * @param {string} grainKey - cle de cereale
- * @returns {boolean}
+ * @returns {{port: Object, alias: string}|null}
  */
-export function matchShipToGrain(ship, grainKey) {
+function findMatchingPort(ship, grainKey) {
   const dest = normalizeDestination(ship?.destination)
-  if (!dest) return false
+  if (!dest) return null
 
   const ports = getPortsForGrain(grainKey)
   for (const port of ports) {
@@ -51,19 +52,72 @@ export function matchShipToGrain(ship, grainKey) {
       if (normAlias.length <= 2 && dest.length > 4) continue
 
       if (dest.includes(normAlias) || normAlias.includes(dest)) {
-        return true
+        return { port, alias: normAlias }
       }
     }
   }
-  return false
+  return null
 }
 
 /**
- * Retourne la liste des cles de cereales qui matchent la destination d'un navire.
+ * Teste si la destination AIS d'un navire correspond a un port connu
+ * pour la cereale specifiee.
+ *
+ * @param {Object} ship - objet navire du store ({ destination, ... })
+ * @param {string} grainKey - cle de cereale
+ * @returns {boolean}
+ */
+export function matchShipToGrain(ship, grainKey) {
+  return findMatchingPort(ship, grainKey) !== null
+}
+
+// Index lazy : pour chaque port (identifie par unlocode si dispo, sinon name),
+// compte combien de cereales le referencent. Sert a evaluer la specialisation
+// d'un port. Construit une seule fois au premier appel.
+let _portGrainCount = null
+function getPortGrainCount(port) {
+  if (_portGrainCount === null) {
+    _portGrainCount = new Map()
+    for (const grainKey of Object.keys(grainPorts)) {
+      for (const p of grainPorts[grainKey]) {
+        const id = p.unlocode || p.name
+        _portGrainCount.set(id, (_portGrainCount.get(id) ?? 0) + 1)
+      }
+    }
+  }
+  const id = port.unlocode || port.name
+  return _portGrainCount.get(id) ?? 1
+}
+
+/**
+ * Determine la fiabilite d'un match port/cereale.
+ *
+ * Regles (cumulatives, la plus basse l'emporte) :
+ * - alias court (<= 3 caracteres, ex: "ROU", "DKK") => "low"
+ *   (un code de 3 lettres a un risque eleve de collision avec du texte libre AIS)
+ * - 1-2 cereales associees au port => "high" (port specialise)
+ * - 3-5 cereales => "medium" (port mixte type Rotterdam)
+ * - 6+ cereales => "low" (hub generaliste, matching peu informatif)
+ *
+ * @param {Object} port - objet port de grainPorts.json
+ * @param {string} alias - alias normalise qui a matche
+ * @returns {"high"|"medium"|"low"}
+ */
+function computeConfidence(port, alias) {
+  if (alias.length <= 3) return 'low'
+  const count = getPortGrainCount(port)
+  if (count <= 2) return 'high'
+  if (count <= 5) return 'medium'
+  return 'low'
+}
+
+/**
+ * Retourne la liste des cereales qui matchent la destination d'un navire,
+ * accompagnees de leur niveau de fiabilite.
  * Utile pour l'InfoPanel ("Cereales probables").
  *
  * @param {Object} ship - objet navire du store
- * @returns {string[]} tableau de grain keys (peut etre vide)
+ * @returns {{grainKey: string, confidence: "high"|"medium"|"low"}[]}
  */
 export function getMatchingGrains(ship) {
   const dest = normalizeDestination(ship?.destination)
@@ -71,8 +125,12 @@ export function getMatchingGrains(ship) {
 
   const matches = []
   for (const grainKey of Object.keys(grainPorts)) {
-    if (matchShipToGrain(ship, grainKey)) {
-      matches.push(grainKey)
+    const found = findMatchingPort(ship, grainKey)
+    if (found) {
+      matches.push({
+        grainKey,
+        confidence: computeConfidence(found.port, found.alias),
+      })
     }
   }
   return matches
