@@ -6,6 +6,7 @@ import ShipMarkers from './components/ShipMarkers'
 import HUD from './components/HUD'
 import InfoPanel from './components/InfoPanel'
 import GrainSelector from './components/GrainSelector'
+import SummaryBanner from './components/SummaryBanner'
 import { useAISStream } from './hooks/useAISStream'
 import { useShipStore } from './stores/useShipStore'
 import { GRAIN_LIST } from './data/grainList'
@@ -54,6 +55,7 @@ export default function App() {
         />
       </Canvas>
       <HUD />
+      <SummaryBanner />
       <GrainSelector />
       <InfoPanel />
     </>

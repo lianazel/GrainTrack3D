@@ -377,3 +377,61 @@ code {
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------------------
+ * SummaryBanner : pill central temps reel (overlay HTML, hors Canvas R3F).
+ * ------------------------------------------------------------------------ */
+
+.summary-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  max-width: calc(100vw - 32px);
+  font: 14px/1 var(--sans);
+  color: #e6e6ec;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  /* pointer-events: none : le globe sous le bandeau reste cliquable
+     (raycast Three.js + OrbitControls). */
+  pointer-events: none;
+  user-select: none;
+}
+
+.summary-banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+  /* Reutilise l'animation existante du HUD pour ne pas dupliquer la keyframe. */
+  animation: hud-pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.summary-banner-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-banner-text strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.summary-banner-grain {
+  padding: 1px 6px;
+  font-size: 12px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 999px;
+  white-space: nowrap;
+}
