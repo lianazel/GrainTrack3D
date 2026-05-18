@@ -1,9 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Empeche Google Translate / extensions de traduction de muter le DOM
+         gere par React (crash "insertBefore" NotFoundError sur Chrome). -->
+    <meta name="google" content="notranslate" />
     <title>graintrack3d-temp</title>
   </head>
   <body>
