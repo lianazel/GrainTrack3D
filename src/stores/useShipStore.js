@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
+// Limites de sécurité — défense contre la croissance illimitée du state
+const MAX_SHIPS = 5000
+const MAX_BLACKLIST = 10000
+
 export const useShipStore = create(
   subscribeWithSelector((set, get) => ({
     ships: new Map(),
@@ -67,6 +71,24 @@ export const useShipStore = create(
             heading: pos.heading,
             lastSeen: pos.timestamp,
           })
+        }
+      }
+
+      // Évincer les navires les plus anciens si on dépasse MAX_SHIPS
+      if (nextShips.size > MAX_SHIPS) {
+        const sorted = [...nextShips.entries()].sort(
+          (a, b) => (a[1].lastSeen ?? 0) - (b[1].lastSeen ?? 0),
+        )
+        const excess = nextShips.size - MAX_SHIPS
+        for (let i = 0; i < excess; i++) nextShips.delete(sorted[i][0])
+      }
+
+      // Plafonner le blacklist (FIFO — les premières entrées insérées sont les plus anciennes)
+      if (nextBlacklist.size > MAX_BLACKLIST) {
+        const it = nextBlacklist.values()
+        let toRemove = nextBlacklist.size - MAX_BLACKLIST
+        while (toRemove-- > 0) {
+          nextBlacklist.delete(it.next().value)
         }
       }
 

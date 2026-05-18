@@ -24,6 +24,8 @@ export function parseMessage(raw) {
     const lat = inner.Latitude
     const lon = inner.Longitude
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
+    // Borner aux coordonnées géographiques valides (défense contre données AIS malformées)
+    if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null
     return {
       kind: 'position',
       mmsi,

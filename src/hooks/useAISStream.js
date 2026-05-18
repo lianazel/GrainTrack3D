@@ -10,6 +10,7 @@ const STALE_AGE_MS = 30 * 60 * 1000
 const BACKOFF_MIN_MS = 1000
 const BACKOFF_MAX_MS = 30_000
 const STABLE_OPEN_MS = 5000
+const MAX_RECONNECT_ATTEMPTS = 50
 
 // AISStream envoie ses frames en binaire (pas en texte). On force arraybuffer
 // et on décode explicitement, sinon event.data est un Blob qui fait silencieusement
@@ -36,6 +37,7 @@ export function useAISStream() {
   const openSinceRef = useRef(0)
   const unmountedRef = useRef(false)
   const rxRef = useRef({ raw: 0, parsedPos: 0, parsedStatic: 0, sampleLogged: 0 })
+  const reconnectAttemptsRef = useRef(0)
 
   useEffect(() => {
     const setStatus = useShipStore.getState().setConnectionStatus
@@ -57,6 +59,7 @@ export function useAISStream() {
 
       ws.addEventListener('open', () => {
         openSinceRef.current = Date.now()
+        reconnectAttemptsRef.current = 0
         setStatus('open')
         ws.send(
           JSON.stringify({
@@ -102,12 +105,18 @@ export function useAISStream() {
       ws.addEventListener('close', () => {
         socketRef.current = null
         if (unmountedRef.current) return
+        reconnectAttemptsRef.current++
+        if (reconnectAttemptsRef.current > MAX_RECONNECT_ATTEMPTS) {
+          console.warn(`[AIS] abandon après ${MAX_RECONNECT_ATTEMPTS} tentatives de reconnexion`)
+          setStatus('error')
+          return
+        }
         const wasStable = openSinceRef.current && Date.now() - openSinceRef.current > STABLE_OPEN_MS
         if (wasStable) backoffRef.current = BACKOFF_MIN_MS
         const delay = backoffRef.current
         backoffRef.current = Math.min(backoffRef.current * 2, BACKOFF_MAX_MS)
         setStatus('reconnecting')
-        if (import.meta.env.DEV) console.log(`[AIS] reconnecting in ${delay}ms`)
+        if (import.meta.env.DEV) console.log(`[AIS] reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`)
         reconnectTimerRef.current = setTimeout(connect, delay)
       })
 

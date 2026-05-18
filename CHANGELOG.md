@@ -4,6 +4,23 @@ All notable changes to GrainTrack3D are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.1] — 2026-05-18
+
+Security hardening audit — 5 correctifs défensifs.
+
+### Fixed
+
+- **Coordinate bounds validation** — `aisParser.js` rejette désormais les positions hors bornes géographiques (lat ±90, lon ±180) en plus du check `Number.isFinite`
+- **Unbounded state growth** — `useShipStore.js` plafonne le Map `ships` à 5 000 entrées (éviction LRU des plus anciens) et le Set `blacklist` à 10 000 entrées (purge FIFO)
+- **Infinite reconnection loop** — `useAISStream.js` limite les tentatives de reconnexion WebSocket à 50 max, puis bascule en statut `error` au lieu de boucler indéfiniment
+- **Missing security headers** — `vercel.json` inclut désormais CSP (`connect-src` restreint à `wss://stream.aisstream.io`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN` (compatible iframe GrainWatch), `X-XSS-Protection`, `Referrer-Policy`
+
+### Security
+
+- Audit complet 4 couches (clé API, WebSocket, frontend React, déploiement Vercel)
+- Couches 1 et 4 conformes — aucun correctif nécessaire
+- Couches 2 et 3 — 5 défenses manquantes corrigées (aucune faille exploitable, mais hardening préventif)
+
 ## [1.1.0] — 2026-05-15
 
 Étape 6 : filtre céréales par port de destination AIS.
