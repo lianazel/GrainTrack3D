@@ -156,6 +156,20 @@ vercel.json                   # Config rewrites API route
 - `scripts/analyze-destinations.mjs` : outil standalone Node 22+ (WebSocket natif) pour identifier les destinations AIS non couvertes par `grainPorts.json`. Usage : `node scripts/analyze-destinations.mjs 120`.
 - Zero nouvelle dependance npm.
 
+### Étape 7 — Améliorations UX & correctif Google Translate ✅ TERMINÉE
+
+- **Badges céréales à opacité variable** (InfoPanel) : `getMatchingGrains()` dans `src/utils/portMatcher.js` retourne désormais `[{ grainKey, confidence }, ...]`. La confiance est calculée par `computeConfidence(port, alias)` à partir d'un index lazy `getPortGrainCount()` qui compte combien de céréales référencent chaque port (clé canonique = `unlocode` sinon `name`). Règles : alias ≤ 3 chars → `low` (collision élevée avec texte libre AIS) ; 1-2 céréales → `high` ; 3-5 → `medium` ; 6+ → `low`. InfoPanel applique une opacité inline (`high=1, medium=0.7, low=0.4`) via le mapping `CONFIDENCE_OPACITY`. Helper interne `findMatchingPort()` mutualise la logique entre `matchShipToGrain` (signature booléenne inchangée → `GrainSelector` et filtre `ShipMarkers` préservés) et `getMatchingGrains`.
+- **Auto-rotation du globe** (App.jsx) : `<OrbitControls autoRotate={!userInteracted} autoRotateSpeed={0.5}>`. State `userInteracted` flippé à `true` au premier `onPointerDown` ou `onWheel` sur le `<Canvas>`. One-shot, ne reprend jamais. Coexiste avec `onPointerMissed` (désélection navire) sans conflit (événements distincts).
+- **SummaryBanner** (`src/components/SummaryBanner.jsx`) : pill centré top via `position: fixed; left: 50%; transform: translateX(-50%)`. Compteur temps réel mémoïsé (`useMemo` sur `ships` + `selectedGrain`), réutilise `matchShipToGrain`. Point vert pulse via la keyframe `hud-pulse` existante (pas de duplication). `pointer-events: none` → globe cliquable dessous. `text-overflow: ellipsis` + `max-width: calc(100vw - 32px)` pour le responsive.
+- **HUD allégé** : `src/components/HUD.jsx` ne contient plus que la pastille de statut, le label et la version. Imports `useMemo`, `GRAIN_BY_KEY`, `matchShipToGrain` retirés. Classes CSS `.hud-count strong` et `.hud-grain-badge` supprimées de `src/index.css`.
+- **Toolbar extensible** (`src/components/Toolbar.jsx`) : conteneur `flex-direction: column; align-items: flex-end` en bottom-right, conçu pour accueillir les futurs boutons (toggle heatmap, filtre routes, etc.). Premier bouton `📷 Snapshot` :
+  - **PNG** : `canvas.toBlob('image/png')` → téléchargement `graintrack3d-YYYY-MM-DD.png`. Requiert `gl={{ preserveDrawingBuffer: true }}` sur le `<Canvas>` (sans ça, le buffer WebGL est purgé après chaque frame et le PNG est transparent).
+  - **CSV** : 10 colonnes (MMSI, Name, ShipType, Lat, Lon, Speed, Course, Heading, Destination, LastSeen ISO). Respecte le filtre `selectedGrain` actif. Échappement RFC 4180 minimal (`csvField`). Blob téléchargé via `URL.createObjectURL` + `revokeObjectURL`.
+  - **Shift conditionnel** : `.toolbar-shifted` (`right: 340px`) appliqué quand `selectedMMSI != null`, transition 220ms synchro avec le slide de l'InfoPanel. Media query `max-width: 600px` annule le shift sur mobile (InfoPanel passe en `max-width: 90vw`).
+- **Fix Google Translate** : `translate="no"` sur `<html>` + `<meta name="google" content="notranslate" />` dans `index.html`. Empêche les extensions de traduction de muter le DOM React (erreur `insertBefore` NotFoundError sur Chrome quand la traduction auto est active).
+
+Aucune nouvelle dépendance npm pour cette étape.
+
 ## Maintenance de la base ports/cereales
 
 La base `src/data/grainPorts.json` est statique et doit etre enrichie periodiquement.

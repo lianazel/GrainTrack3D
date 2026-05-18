@@ -4,6 +4,35 @@ All notable changes to GrainTrack3D are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.2.0] — 2026-05-18
+
+Étape 7 : améliorations UX (fiabilité du matching, rotation auto, bandeau synthèse, export snapshot) et correctif Google Translate.
+
+### Added
+
+- **Badges céréales à opacité variable** — chaque badge `.grain-match` de l'InfoPanel reflète désormais la fiabilité du matching port/céréale : opacité 1 (port spécialisé, 1-2 céréales), 0.7 (port mixte, 3-5), 0.4 (port généraliste 6+ ou alias court ≤3 caractères). `getMatchingGrains()` retourne `{ grainKey, confidence }` ; nouvel index lazy `getPortGrainCount()` dans `portMatcher.js`.
+- **Auto-rotation du globe** — rotation lente automatique au démarrage (`autoRotateSpeed=0.5`), stoppée définitivement au premier `pointerdown` / `wheel` sur le `<Canvas>` (one-shot, ne reprend jamais).
+- **SummaryBanner** — bandeau pill centré en haut avec compteur temps réel (`● N vraquiers 🌾 Blé en transit`), pulse vert via la keyframe `hud-pulse` existante, `pointer-events: none` pour ne pas bloquer le globe.
+- **Toolbar extensible bottom-right** — conteneur flex column accueillant les futures actions. Premier bouton `📷 Snapshot` exporte simultanément PNG (`canvas.toBlob`) + CSV (10 colonnes, échappement RFC 4180, respecte le filtre `selectedGrain` actif). La toolbar se décale à `right: 340px` quand l'InfoPanel est ouvert (transition 220ms synchro avec le slide du panneau).
+
+### Changed
+
+- **HUD allégé** — compteur de vraquiers et badge céréale retirés (désormais portés par le SummaryBanner). Le HUD ne contient plus que la pastille de statut, le label et la version.
+- **`<Canvas>`** — `gl={{ preserveDrawingBuffer: true }}` ajouté ; indispensable pour que `canvas.toBlob()` capture un PNG non-transparent.
+
+### Fixed
+
+- **Google Translate crashe React** — `translate="no"` sur `<html>` + `<meta name="google" content="notranslate" />` dans `index.html`. Empêche les extensions de traduction de muter le DOM géré par React (erreur `insertBefore` NotFoundError sur Chrome).
+
+### Removed
+
+- Classes CSS inutilisées `.hud-count strong` et `.hud-grain-badge` (et leur section de commentaire) supprimées de `src/index.css`.
+
+### Notes
+
+- Aucune nouvelle dépendance npm.
+- API publique de `matchShipToGrain(ship, grainKey)` inchangée (booléen) — `GrainSelector`, filtrage `ShipMarkers` et paramètre URL `?grain=xxx` continuent de fonctionner.
+
 ## [1.1.1] — 2026-05-18
 
 Security hardening audit — 5 correctifs défensifs.
