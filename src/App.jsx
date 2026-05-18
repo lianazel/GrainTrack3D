@@ -7,6 +7,7 @@ import HUD from './components/HUD'
 import InfoPanel from './components/InfoPanel'
 import GrainSelector from './components/GrainSelector'
 import SummaryBanner from './components/SummaryBanner'
+import Toolbar from './components/Toolbar'
 import { useAISStream } from './hooks/useAISStream'
 import { useShipStore } from './stores/useShipStore'
 import { GRAIN_LIST } from './data/grainList'
@@ -40,6 +41,7 @@ export default function App() {
         onPointerMissed={() => setSelected(null)}
         onPointerDown={stopAutoRotate}
         onWheel={stopAutoRotate}
+        gl={{ preserveDrawingBuffer: true }}
       >
         <ambientLight intensity={0.4} />
         <directionalLight position={[5, 3, 5]} intensity={1.2} />
@@ -57,6 +59,7 @@ export default function App() {
       <HUD />
       <SummaryBanner />
       <GrainSelector />
+      <Toolbar />
       <InfoPanel />
     </>
   )

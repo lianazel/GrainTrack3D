@@ -415,3 +415,59 @@ code {
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------------------
+ * Toolbar : conteneur extensible bottom-right pour les actions globe
+ * (snapshot, futurs toggles heatmap / routes / etc.).
+ * ------------------------------------------------------------------------ */
+
+.toolbar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  /* Transition synchro avec le slide de l'InfoPanel (220ms) pour eviter le saut
+     visuel quand le panneau s'ouvre/se ferme. */
+  transition: right 220ms ease;
+}
+
+/* InfoPanel = 320px de large, ancre a droite. 340px = 320 + 20 de marge. */
+.toolbar-shifted {
+  right: 340px;
+}
+
+.toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font: 14px/1 var(--sans);
+  color: #e6e6ec;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.toolbar-btn:hover {
+  filter: brightness(1.2);
+}
+
+.toolbar-btn:active {
+  filter: brightness(0.95);
+}
+
+@media (max-width: 600px) {
+  /* Sur mobile, l'InfoPanel passe en max-width: 90vw — le shift fixe a 340px
+     n'est plus pertinent. On garde la toolbar a sa position de base. */
+  .toolbar-shifted {
+    right: 20px;
+  }
+}
