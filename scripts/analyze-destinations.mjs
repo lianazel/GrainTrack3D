@@ -7,8 +7,17 @@
  * et identifie celles qui ne sont couvertes par aucune cereale.
  *
  * Usage :
- *   node scripts/analyze-destinations.mjs [duree_secondes]
- *   (defaut : 120 secondes)
+ *   node scripts/analyze-destinations.mjs [duree_secondes] [--zones <keys>]
+ *
+ *   duree_secondes : duree de collecte (defaut 120)
+ *   --zones        : `all` (defaut, les 8 zones) ou liste de cles separees
+ *                    par des virgules. Cles disponibles : voir MARITIME_ZONES.
+ *
+ * Exemples :
+ *   node scripts/analyze-destinations.mjs 300
+ *   node scripts/analyze-destinations.mjs 300 --zones all
+ *   node scripts/analyze-destinations.mjs 120 --zones mediterranean
+ *   node scripts/analyze-destinations.mjs 300 --zones mediterranean,black-sea,persian-gulf
  *
  * Necessite : VITE_AIS_API_KEY dans .env, Node 22+ (WebSocket natif).
  *
@@ -22,6 +31,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { MARITIME_ZONES } from '../src/data/maritimeZones.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -71,14 +81,65 @@ function matchDestination(dest) {
   return matches
 }
 
-const DURATION = parseInt(process.argv[2] || '120', 10) * 1000
-const BOUNDING_BOX = [[20, -100], [65, 20]]
+// Parsing CLI : duree positionnelle + --zones <keys>|<key1>=<key2>...
+// Format tolerant : --zones X ou --zones=X. Tout argument non reconnu est
+// considere positionnel (la duree est le 1er positionnel).
+function parseArgs(argv) {
+  const args = argv.slice(2)
+  const positional = []
+  let zonesArg = null
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i]
+    if (a === '--zones') {
+      zonesArg = args[++i] ?? null
+    } else if (a.startsWith('--zones=')) {
+      zonesArg = a.slice('--zones='.length)
+    } else {
+      positional.push(a)
+    }
+  }
+  return { positional, zonesArg }
+}
+
+const { positional, zonesArg } = parseArgs(process.argv)
+const DURATION = parseInt(positional[0] || '120', 10) * 1000
+
+// Resolution des zones : 'all' (defaut) ou liste CSV de cles. Toute cle inconnue
+// fait sortir le script avec un message explicite pour eviter de scanner
+// silencieusement une zone vide.
+const zonesValue = zonesArg ?? 'all'
+let selectedZoneKeys
+if (zonesValue === 'all') {
+  selectedZoneKeys = MARITIME_ZONES.map((z) => z.key)
+} else {
+  selectedZoneKeys = zonesValue.split(',').map((s) => s.trim()).filter(Boolean)
+}
+
+if (selectedZoneKeys.length === 0) {
+  console.error('Erreur : aucune zone selectionnee. Utiliser --zones all ou --zones <key1,key2>.')
+  process.exit(1)
+}
+
+const resolvedZones = selectedZoneKeys.map((key) => {
+  const z = MARITIME_ZONES.find((zone) => zone.key === key)
+  if (!z) {
+    console.error(`Erreur : zone inconnue "${key}".`)
+    console.error(`Zones disponibles : ${MARITIME_ZONES.map((zone) => zone.key).join(', ')}`)
+    process.exit(1)
+  }
+  return z
+})
+
+const BOUNDING_BOXES = resolvedZones.map((z) => z.bbox)
 const BULK_TYPES = new Set([70, 71, 72, 73, 74, 75, 76, 77, 78, 79])
 
 const destinations = new Map()
 
 console.log(`Connexion au flux AIS pour ${DURATION / 1000}s...`)
-console.log(`BoundingBox : ${JSON.stringify(BOUNDING_BOX)}`)
+console.log(`Zones (${resolvedZones.length}) :`)
+for (const z of resolvedZones) {
+  console.log(`  - ${z.key.padEnd(20)} ${z.label}`)
+}
 console.log()
 
 const ws = new WebSocket('wss://stream.aisstream.io/v0/stream')
@@ -89,7 +150,7 @@ ws.addEventListener('open', () => {
   ws.send(
     JSON.stringify({
       APIKey: API_KEY,
-      BoundingBoxes: [BOUNDING_BOX],
+      BoundingBoxes: BOUNDING_BOXES,
       FilterMessageTypes: ['ShipStaticData'],
     }),
   )
@@ -151,7 +212,8 @@ function printReport() {
   console.log("RAPPORT D'ANALYSE DES DESTINATIONS AIS")
   console.log('='.repeat(70))
 
-  console.log(`\nDestinations uniques : ${all.length}`)
+  console.log(`\nZones scannees       : ${resolvedZones.map((z) => z.key).join(', ')}`)
+  console.log(`Destinations uniques : ${all.length}`)
   console.log(`Messages totaux      : ${totalMessages}`)
   console.log(`Couvertes            : ${covered.length} destinations (${coveredMessages} messages)`)
   console.log(`Non couvertes        : ${uncovered.length} destinations`)
