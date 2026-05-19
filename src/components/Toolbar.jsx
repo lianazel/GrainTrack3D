@@ -3,6 +3,7 @@ import { useShipStore } from '../stores/useShipStore'
 import { matchShipToGrain } from '../utils/portMatcher'
 import { GRAIN_BY_KEY } from '../data/grainList'
 import AboutScreen from './AboutScreen'
+import ZonePicker from './ZonePicker'
 
 function todayISODate() {
   return new Date().toISOString().slice(0, 10)
@@ -81,6 +82,7 @@ export default function Toolbar() {
   const panelOpen = useShipStore((s) => s.selectedMMSI != null)
   const [open, setOpen] = useState(false)
   const [showAbout, setShowAbout] = useState(false)
+  const [showZones, setShowZones] = useState(false)
 
   const handlePNG = () => {
     exportPNG(todayISODate())
@@ -94,6 +96,11 @@ export default function Toolbar() {
 
   const handleAbout = () => {
     setShowAbout(true)
+    setOpen(false)
+  }
+
+  const handleZones = () => {
+    setShowZones(true)
     setOpen(false)
   }
 
@@ -125,6 +132,14 @@ export default function Toolbar() {
               type="button"
               className="toolbar-menu-item"
               role="menuitem"
+              onClick={handleZones}
+            >
+              🌍 Zones maritimes
+            </button>
+            <button
+              type="button"
+              className="toolbar-menu-item"
+              role="menuitem"
               onClick={handleAbout}
             >
               ℹ️ A propos
@@ -143,6 +158,7 @@ export default function Toolbar() {
         </button>
       </div>
       {showAbout && <AboutScreen onClose={() => setShowAbout(false)} />}
+      {showZones && <ZonePicker onClose={() => setShowZones(false)} />}
     </>
   )
 }

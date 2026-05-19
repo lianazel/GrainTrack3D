@@ -397,6 +397,15 @@ code {
   white-space: nowrap;
 }
 
+.summary-banner-zone {
+  color: #c9c9d3;
+  font-weight: 500;
+  /* Le parent .summary-banner est pointer-events: none pour laisser passer
+     les clics vers le globe. On réactive sur ce span uniquement, sinon le
+     tooltip natif (attribut title) ne s'affiche pas au survol. */
+  pointer-events: auto;
+}
+
 /* ---------------------------------------------------------------------------
  * Toolbar : conteneur extensible bottom-right pour les actions globe
  * (snapshot, futurs toggles heatmap / routes / etc.).
@@ -626,6 +635,236 @@ code {
   color: #d6d6dd;
 }
 
+/* ---------------------------------------------------------------------------
+ * ZonePicker : overlay plein écran modal (entrée "Zones maritimes" de la Toolbar).
+ * Même structure d'overlay que AboutScreen pour la cohérence visuelle.
+ * ------------------------------------------------------------------------ */
+
+.zone-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.zone-picker-content {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px 28px;
+  color: #e6e6ec;
+  background: rgba(10, 12, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  font: 14px/1.55 var(--sans);
+}
+
+.zone-picker-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  color: #e6e6ec;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.zone-picker-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.zone-picker-back-bar {
+  display: none;
+}
+
+.zone-picker-header {
+  margin-bottom: 18px;
+}
+
+.zone-picker-title {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.zone-picker-lede {
+  margin: 0;
+  color: #c9c9d3;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.zone-picker-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.zone-picker-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  padding: 12px 16px;
+  font: 14px/1.2 var(--sans);
+  color: #e6e6ec;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: background 120ms ease;
+}
+
+.zone-picker-list li:last-child .zone-picker-item {
+  border-bottom: none;
+}
+
+.zone-picker-item:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.zone-picker-item.active {
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.zone-picker-item.active:hover {
+  background: rgba(34, 197, 94, 0.14);
+}
+
+.zone-picker-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.zone-picker-check {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+.zone-picker-item.active .zone-picker-check {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.zone-picker-emoji {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.zone-picker-label {
+  flex: 1;
+}
+
+.zone-picker-limit {
+  margin: 14px 0 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-style: italic;
+  color: #9ca3af;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+/* ---------------------------------------------------------------------------
+ * WelcomeToast : carte centrée affichée au premier lancement uniquement.
+ * Persistance via localStorage('graintrack3d-welcomed').
+ * ------------------------------------------------------------------------ */
+
+.welcome-toast-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.welcome-toast {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  color: #e6e6ec;
+  background: rgba(10, 12, 18, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  font: 14px/1.55 var(--sans);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.welcome-toast-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.welcome-toast-text {
+  margin: 0 0 18px;
+  color: #d6d6dd;
+  font-size: 14px;
+}
+
+.welcome-toast-text strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.welcome-toast-btn {
+  width: 100%;
+  padding: 10px 16px;
+  font: 14px/1.2 var(--sans);
+  font-weight: 600;
+  color: #fff;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.welcome-toast-btn:hover {
+  background: #16a34a;
+}
+
+.welcome-toast-btn:active {
+  background: #15803d;
+}
+
 @media (max-width: 600px) {
   /* HUD top-left + SummaryBanner top-center se chevauchent sur ecrans etroits.
      On empile : SummaryBanner descend sous la pill du HUD + le grain selector. */
@@ -681,6 +920,49 @@ code {
   }
 
   .about-back-bar:active {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  /* ZonePicker : même bascule full-screen mobile que AboutScreen (barre
+     "Retour" en haut, carte sans border-radius, croix desktop masquée). */
+  .zone-picker {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .zone-picker-content {
+    max-width: none;
+    min-height: 100%;
+    border-radius: 0;
+    border: none;
+    padding: 64px 18px 28px;
+  }
+
+  .zone-picker-close {
+    display: none;
+  }
+
+  .zone-picker-back-bar {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    padding: 0 16px;
+    font: 15px/1 var(--sans);
+    font-weight: 500;
+    color: #e6e6ec;
+    background: rgba(10, 12, 18, 0.92);
+    backdrop-filter: blur(8px);
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .zone-picker-back-bar:active {
     background: rgba(255, 255, 255, 0.04);
   }
 }

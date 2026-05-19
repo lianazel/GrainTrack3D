@@ -1,9 +1,39 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
+import { DEFAULT_ZONE_KEYS, STORAGE_KEY } from '../data/maritimeZones'
 
 // Limites de sécurité — défense contre la croissance illimitée du state
 const MAX_SHIPS = 5000
 const MAX_BLACKLIST = 10000
+
+// Lecture défensive de localStorage : peut throw en mode privé Firefox/Safari ou
+// si l'utilisateur a désactivé le stockage local. Tout JSON invalide ou non-tableau
+// retombe sur la zone par défaut pour éviter un démarrage sans aucun abonnement AIS.
+function readZonesFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return DEFAULT_ZONE_KEYS
+    const parsed = JSON.parse(raw)
+    if (
+      Array.isArray(parsed) &&
+      parsed.length > 0 &&
+      parsed.every((k) => typeof k === 'string')
+    ) {
+      return parsed
+    }
+    return DEFAULT_ZONE_KEYS
+  } catch {
+    return DEFAULT_ZONE_KEYS
+  }
+}
+
+function writeZonesToStorage(zoneKeys) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(zoneKeys))
+  } catch {
+    /* stockage local indisponible — la sélection reste valable pour la session */
+  }
+}
 
 export const useShipStore = create(
   subscribeWithSelector((set, get) => ({
@@ -13,12 +43,25 @@ export const useShipStore = create(
     connectionStatus: 'idle',
     selectedMMSI: null,
     selectedGrain: null,
+    selectedZones: readZonesFromStorage(),
 
     setConnectionStatus: (status) => set({ connectionStatus: status }),
 
     setSelectedMMSI: (mmsi) => set({ selectedMMSI: mmsi }),
 
     setSelectedGrain: (grain) => set({ selectedGrain: grain }),
+
+    // Changement de zones : on persiste le choix et on vide immédiatement les
+    // navires + positions en attente. Le hook WebSocket observe selectedZones
+    // et déclenche une reconnexion en arrière-plan avec la nouvelle bbox set.
+    setSelectedZones: (zoneKeys) => {
+      writeZonesToStorage(zoneKeys)
+      set({
+        selectedZones: zoneKeys,
+        ships: new Map(),
+        pendingPositions: new Map(),
+      })
+    },
 
     applyBatch: ({ positions, statics }) => {
       const { ships, pendingPositions, blacklist } = get()

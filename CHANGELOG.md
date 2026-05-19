@@ -4,6 +4,22 @@ All notable changes to GrainTrack3D are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.3.0] — 2026-05-19
+
+### Added
+- Multi-zone geographic selector: 8 maritime zones (Atlantique Nord, Méditerranée, Mer Noire, Mer du Nord & Baltique, Golfe du Mexique & Caraïbes, Golfe Persique & Mer d'Arabie, Asie du Sud-Est, Océan Indien Ouest)
+- Zone selection persisted in localStorage, max 3 simultaneous zones
+- WebSocket reconnects automatically with new BoundingBoxes on zone change (intentional close pattern)
+- Welcome toast on first launch explaining default zone and how to change it
+- SummaryBanner shows active zone name(s) with tooltip for multi-zone detail
+- Zone picker accessible via toolbar menu "🌍 Zones maritimes"
+- Mobile-responsive zone picker (fullscreen with back bar)
+
+### Changed
+- useAISStream now reads dynamic BoundingBoxes from Zustand store instead of hardcoded BBOX constant
+- Zustand store: added selectedZones state with localStorage read/write
+- SummaryBanner: added zone label display with pointer-events: auto for tooltip
+
 ## [1.2.0] — 2026-05-18
 
 Étape 7 : améliorations UX (fiabilité du matching, rotation auto, bandeau synthèse, export snapshot) et correctif Google Translate.

@@ -8,6 +8,7 @@ import InfoPanel from './components/InfoPanel'
 import GrainSelector from './components/GrainSelector'
 import SummaryBanner from './components/SummaryBanner'
 import Toolbar from './components/Toolbar'
+import WelcomeToast from './components/WelcomeToast'
 import { useAISStream } from './hooks/useAISStream'
 import { useShipStore } from './stores/useShipStore'
 import { GRAIN_LIST } from './data/grainList'
@@ -61,6 +62,7 @@ export default function App() {
       <GrainSelector />
       <Toolbar />
       <InfoPanel />
+      <WelcomeToast />
     </>
   )
 }

@@ -170,6 +170,18 @@ vercel.json                   # Config rewrites API route
 
 Aucune nouvelle dépendance npm pour cette étape.
 
+### Étape 8 — Sélecteur multi-zones & toast de bienvenue ✅ TERMINÉE
+
+- `src/data/maritimeZones.js` : 8 zones maritimes avec clé, label, emoji, bbox AISStream. Constantes `DEFAULT_ZONE_KEYS=['atlantic-north']`, `MAX_ZONES=3`, `STORAGE_KEY`.
+- `src/stores/useShipStore.js` : ajout `selectedZones` au state, lecture/écriture localStorage défensive (try/catch pour mode privé). `setSelectedZones` persiste et vide `ships`+`pendingPositions` pour forcer un rechargement propre.
+- `src/hooks/useAISStream.js` : suppression du BBOX hardcodé. Nouveau `zonesToBboxes(zoneKeys)` qui mappe les clés de zones vers un tableau de bboxes. Pattern `intentionalCloseRef` pour distinguer fermeture volontaire (changement de zone) vs déconnexion réseau. Subscriber Zustand sur `selectedZones` : fermeture intentionnelle + reconnexion avec nouvelles BoundingBoxes.
+- `src/components/ZonePicker.jsx` : overlay multi-sélection avec checkboxes, garde-fous (min 1, max 3 zones), message limite atteinte. Pattern mobile identique à AboutScreen (plein écran + barre retour).
+- `src/components/WelcomeToast.jsx` : affiché une seule fois au premier lancement, persistance via `localStorage('graintrack3d-welcomed')`, lecture défensive. Texte explicatif zone par défaut + indication menu.
+- `src/components/SummaryBanner.jsx` : affiche le nom de la zone active (ou "N zones" si multi-sélection) avec tooltip détaillé. `pointer-events: auto` sur le span zone pour permettre le tooltip natif malgré le `pointer-events: none` du parent.
+- `src/components/Toolbar.jsx` : ajout entrée "🌍 Zones maritimes" dans le menu.
+- `src/index.css` : styles zone-picker (overlay, liste, checkboxes, états actif/désactivé/limite), welcome-toast (backdrop, carte, bouton), summary-banner-zone. Responsive mobile pour zone-picker (plein écran, barre retour fixe).
+- Zéro nouvelle dépendance npm.
+
 ## Maintenance de la base ports/cereales
 
 La base `src/data/grainPorts.json` est statique et doit etre enrichie periodiquement.

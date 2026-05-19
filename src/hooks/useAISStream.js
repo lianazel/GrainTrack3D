@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useShipStore } from '../stores/useShipStore'
 import { parseMessage } from '../utils/aisParser'
+import { MARITIME_ZONES } from '../data/maritimeZones'
 
 const AIS_URL = 'wss://stream.aisstream.io/v0/stream'
-const BBOX = [[20, -100], [65, 20]]
 const FLUSH_INTERVAL_MS = 1000
 const PRUNE_INTERVAL_MS = 60_000
 const STALE_AGE_MS = 30 * 60 * 1000
@@ -29,6 +29,18 @@ async function fetchApiKey() {
   return data?.key
 }
 
+// Resout les keys utilisateur en bboxes AISStream. Garde-fou : si aucune zone
+// connue n'est trouvée (clé corrompue dans localStorage par exemple), on retombe
+// sur la première zone du catalogue pour ne pas envoyer un BoundingBoxes vide
+// (AISStream renvoie alors un flux planétaire massif).
+function zonesToBboxes(zoneKeys) {
+  const bboxes = zoneKeys
+    .map((key) => MARITIME_ZONES.find((z) => z.key === key)?.bbox)
+    .filter(Boolean)
+  if (bboxes.length === 0) return [MARITIME_ZONES[0].bbox]
+  return bboxes
+}
+
 export function useAISStream() {
   const bufferRef = useRef({ positions: new Map(), statics: new Map() })
   const socketRef = useRef(null)
@@ -38,6 +50,10 @@ export function useAISStream() {
   const unmountedRef = useRef(false)
   const rxRef = useRef({ raw: 0, parsedPos: 0, parsedStatic: 0, sampleLogged: 0 })
   const reconnectAttemptsRef = useRef(0)
+  // Flag utilisé par le close handler pour distinguer une déconnexion réseau
+  // (qui doit déclencher le backoff exponentiel) d'une fermeture volontaire
+  // due à un changement de zone (qui doit reconnecter immédiatement).
+  const intentionalCloseRef = useRef(false)
 
   useEffect(() => {
     const setStatus = useShipStore.getState().setConnectionStatus
@@ -48,6 +64,7 @@ export function useAISStream() {
     let flushInterval = null
     let pruneInterval = null
     let apiKey = null
+    let unsubscribeZones = null
 
     const connect = () => {
       if (!apiKey) return
@@ -57,6 +74,10 @@ export function useAISStream() {
       ws.binaryType = 'arraybuffer'
       socketRef.current = ws
 
+      // Lecture au moment du connect : si la sélection a changé pendant un
+      // backoff, on prend la valeur courante (et pas une closure périmée).
+      const bboxes = zonesToBboxes(useShipStore.getState().selectedZones)
+
       ws.addEventListener('open', () => {
         openSinceRef.current = Date.now()
         reconnectAttemptsRef.current = 0
@@ -64,11 +85,11 @@ export function useAISStream() {
         ws.send(
           JSON.stringify({
             APIKey: apiKey,
-            BoundingBoxes: [BBOX],
+            BoundingBoxes: bboxes,
             FilterMessageTypes: ['PositionReport', 'ShipStaticData'],
           }),
         )
-        if (import.meta.env.DEV) console.log('[AIS] connected')
+        if (import.meta.env.DEV) console.log('[AIS] connected', bboxes.length, 'bbox(es)')
       })
 
       ws.addEventListener('message', (event) => {
@@ -105,6 +126,12 @@ export function useAISStream() {
       ws.addEventListener('close', () => {
         socketRef.current = null
         if (unmountedRef.current) return
+        // Fermeture volontaire (changement de zone) : ne pas déclencher le
+        // backoff. Le subscriber rappellera connect() lui-même juste après.
+        if (intentionalCloseRef.current) {
+          intentionalCloseRef.current = false
+          return
+        }
         reconnectAttemptsRef.current++
         if (reconnectAttemptsRef.current > MAX_RECONNECT_ATTEMPTS) {
           console.warn(`[AIS] abandon après ${MAX_RECONNECT_ATTEMPTS} tentatives de reconnexion`)
@@ -121,7 +148,7 @@ export function useAISStream() {
       })
 
       ws.addEventListener('error', () => {
-        // Le close handler se charge du backoff. Pas de log d\u00e9taill\u00e9 pour ne rien fuiter.
+        // Le close handler se charge du backoff. Pas de log détaillé pour ne rien fuiter.
         if (import.meta.env.DEV) console.warn('[AIS] socket error')
       })
     }
@@ -167,11 +194,40 @@ export function useAISStream() {
         if (pruned > 0 && import.meta.env.DEV) console.log(`[AIS] pruned ${pruned} stale entries`)
       }, PRUNE_INTERVAL_MS)
 
+      // Observer les changements de zones : ferme proprement la connexion
+      // courante (sans backoff) et reconnecte avec la nouvelle bbox set. La
+      // souscription est posée après la récupération de la clé pour éviter
+      // qu'un changement précoce ne déclenche un connect() sans apiKey.
+      unsubscribeZones = useShipStore.subscribe(
+        (state) => state.selectedZones,
+        () => {
+          if (unmountedRef.current) return
+          // Annuler un éventuel reconnect en attente.
+          if (reconnectTimerRef.current) {
+            clearTimeout(reconnectTimerRef.current)
+            reconnectTimerRef.current = null
+          }
+          // Reset backoff et compteur — c'est un changement utilisateur, pas un échec réseau.
+          backoffRef.current = BACKOFF_MIN_MS
+          reconnectAttemptsRef.current = 0
+          // Vider le buffer pour ne pas pousser des messages d'une zone qui n'est plus active.
+          bufferRef.current = { positions: new Map(), statics: new Map() }
+          // Fermer le socket courant en marquant la fermeture comme intentionnelle.
+          if (socketRef.current) {
+            intentionalCloseRef.current = true
+            socketRef.current.close()
+            socketRef.current = null
+          }
+          connect()
+        },
+      )
+
       connect()
     })()
 
     return () => {
       unmountedRef.current = true
+      if (unsubscribeZones) unsubscribeZones()
       if (flushInterval) clearInterval(flushInterval)
       if (pruneInterval) clearInterval(pruneInterval)
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
