@@ -1,8 +1,7 @@
+import { useState } from 'react'
 import { useShipStore } from '../stores/useShipStore'
 import { matchShipToGrain } from '../utils/portMatcher'
-
-const CSV_HEADER =
-  'MMSI,Name,ShipType,Lat,Lon,Speed,Course,Heading,Destination,LastSeen'
+import { GRAIN_BY_KEY } from '../data/grainList'
 
 function todayISODate() {
   return new Date().toISOString().slice(0, 10)
@@ -19,51 +18,59 @@ function downloadBlob(blob, filename) {
   URL.revokeObjectURL(url)
 }
 
-// Echappement CSV minimal RFC 4180 : double-quote englobant si le champ contient
-// une virgule, un guillemet ou un saut de ligne ; les guillemets internes sont doubles.
-function csvField(v) {
+// Echappement Markdown : protege le delimiteur de cellule | et neutralise
+// les sauts de ligne qui casseraient le tableau.
+function mdCell(v) {
   if (v == null) return ''
-  const s = String(v)
-  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`
-  return s
+  return String(v).replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')
 }
 
 function exportPNG(date) {
-  // Le canvas R3F est le seul <canvas> de la page. preserveDrawingBuffer=true
-  // sur le <Canvas> est indispensable, sinon toBlob retourne un PNG transparent
-  // (le buffer WebGL est vide hors frame de rendu).
   const canvas = document.querySelector('canvas')
   if (!canvas) return
-  canvas.toBlob((blob) => {
+  // iOS Safari interprete le PNG a fond transparent comme blanc dans Photos
+  // et l'apercu. On compose le canvas WebGL sur un fond opaque noir (couleur
+  // du body sous le globe) pour obtenir un rendu coherent multi-plateforme.
+  const out = document.createElement('canvas')
+  out.width = canvas.width
+  out.height = canvas.height
+  const ctx = out.getContext('2d')
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, out.width, out.height)
+  ctx.drawImage(canvas, 0, 0)
+  out.toBlob((blob) => {
     if (blob) downloadBlob(blob, `graintrack3d-${date}.png`)
   }, 'image/png')
 }
 
-function exportCSV(ships, selectedGrain, date) {
+function exportMarkdown(ships, selectedGrain, date) {
   const list = selectedGrain
     ? [...ships.values()].filter((s) => matchShipToGrain(s, selectedGrain))
     : [...ships.values()]
 
+  const grainInfo = selectedGrain ? GRAIN_BY_KEY[selectedGrain] : null
+  const title = grainInfo
+    ? `# GrainTrack3D — ${date} — ${list.length} vraquiers (${grainInfo.emoji} ${grainInfo.labelFr})`
+    : `# GrainTrack3D — ${date} — ${list.length} vraquiers`
+
+  const header = '| MMSI | Nom | Type | Lat | Lon | Vitesse | Cap | Destination |'
+  const sep = '| --- | --- | --- | --- | --- | --- | --- | --- |'
   const rows = list.map((s) =>
-    [
-      s.mmsi,
-      s.name ?? '',
-      s.shipType ?? '',
-      s.lat ?? '',
-      s.lon ?? '',
-      s.speed ?? '',
-      s.course ?? '',
-      s.heading ?? '',
-      s.destination ?? '',
-      Number.isFinite(s.lastSeen) ? new Date(s.lastSeen).toISOString() : '',
-    ]
-      .map(csvField)
-      .join(','),
+    `| ${[
+      mdCell(s.mmsi),
+      mdCell(s.name ?? ''),
+      mdCell(s.shipType ?? ''),
+      Number.isFinite(s.lat) ? mdCell(s.lat.toFixed(3)) : '',
+      Number.isFinite(s.lon) ? mdCell(s.lon.toFixed(3)) : '',
+      Number.isFinite(s.speed) ? mdCell(s.speed.toFixed(1)) : '',
+      Number.isFinite(s.course) ? mdCell(s.course.toFixed(1)) : '',
+      mdCell(s.destination ?? ''),
+    ].join(' | ')} |`,
   )
 
-  const csv = [CSV_HEADER, ...rows].join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
-  downloadBlob(blob, `graintrack3d-${date}.csv`)
+  const md = [title, '', header, sep, ...rows, ''].join('\n')
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' })
+  downloadBlob(blob, `graintrack3d-${date}.md`)
 }
 
 export default function Toolbar() {
@@ -71,17 +78,52 @@ export default function Toolbar() {
   const selectedGrain = useShipStore((s) => s.selectedGrain)
   // Decale la toolbar quand l'InfoPanel est ouvert pour eviter le chevauchement.
   const panelOpen = useShipStore((s) => s.selectedMMSI != null)
+  const [open, setOpen] = useState(false)
 
-  const handleSnapshot = () => {
-    const date = todayISODate()
-    exportPNG(date)
-    exportCSV(ships, selectedGrain, date)
+  const handlePNG = () => {
+    exportPNG(todayISODate())
+    setOpen(false)
+  }
+
+  const handleMarkdown = () => {
+    exportMarkdown(ships, selectedGrain, todayISODate())
+    setOpen(false)
   }
 
   return (
     <div className={`toolbar ${panelOpen ? 'toolbar-shifted' : ''}`}>
-      <button type="button" className="toolbar-btn" onClick={handleSnapshot}>
-        📷 Snapshot
+      {/* Menu rendu AVANT le bouton dans le DOM : avec flex-direction column,
+          il apparait au-dessus du toggle (ouverture vers le haut, attendu
+          pour un anchor bottom-right). */}
+      {open && (
+        <div className="toolbar-menu" role="menu">
+          <button
+            type="button"
+            className="toolbar-menu-item"
+            role="menuitem"
+            onClick={handlePNG}
+          >
+            📷 Capture PNG
+          </button>
+          <button
+            type="button"
+            className="toolbar-menu-item"
+            role="menuitem"
+            onClick={handleMarkdown}
+          >
+            📋 Export Markdown
+          </button>
+        </div>
+      )}
+      <button
+        type="button"
+        className="toolbar-btn"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Menu d'export"
+        onClick={() => setOpen((v) => !v)}
+      >
+        ⋮
       </button>
     </div>
   )

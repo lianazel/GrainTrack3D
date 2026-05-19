@@ -464,8 +464,63 @@ code {
   filter: brightness(0.95);
 }
 
+.toolbar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  pointer-events: auto;
+  animation: toolbar-menu-in 140ms ease-out;
+}
+
+.toolbar-menu-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font: 14px/1 var(--sans);
+  color: #e6e6ec;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.toolbar-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.toolbar-menu-item:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+@keyframes toolbar-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 600px) {
-  /* Sur mobile, l'InfoPanel passe en max-width: 90vw — le shift fixe a 340px
+  /* HUD top-left + SummaryBanner top-center se chevauchent sur ecrans etroits.
+     On empile : SummaryBanner descend sous la pill du HUD. */
+  .summary-banner {
+    top: 52px;
+    font-size: 12px;
+    padding: 6px 14px;
+  }
+
+  /* InfoPanel passe en max-width: 90vw sur mobile — le shift fixe a 340px
      n'est plus pertinent. On garde la toolbar a sa position de base. */
   .toolbar-shifted {
     right: 20px;
