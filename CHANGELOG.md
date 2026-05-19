@@ -4,6 +4,35 @@ All notable changes to GrainTrack3D are documented in this file.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.3.1] — 2026-05-19
+
+Enrichissement de la base ports/céréales suite à un scan AIS multi-zones de 5 minutes.
+
+### Added
+
+- **16 nouveaux ports céréaliers** dans `src/data/grainPorts.json`, vérifiés via recherches web :
+  - **Hub agribulk Europe du Nord** : Antwerp (BEANR), Ghent (BEGNE), Vlissingen (NLVLI), Bremen (DEBRE), Le Havre (FRLEH), Emden (DEEME)
+  - **Baltique** : Gdansk (PLGDN), Klaipeda (LTKLJ), Szczecin (PLSZZ)
+  - **Méditerranée** : Valencia (ESVLC), Barcelona (ESBCN), Genoa (ITGOA), Trieste (ITTRS), Piraeus (GRPIR)
+  - **Moyen-Orient** : Haifa (ILHFA) — Dagon grain terminal (70 % imports IL)
+  - **Amérique du Nord** : Tuxpan (MXTUX) — port céréalier côté Golfe du Mexique
+- **Script `analyze-destinations.mjs` multi-zones** — argument `--zones all|<csv>` qui mappe vers les bboxes définies dans `maritimeZones.js`. Le rapport affiche désormais les zones scannées en tête.
+
+### Changed
+
+- **Alias `FRURO` ajouté à Rouen** sur les 3 entrées existantes (typo récurrente observée dans le flux AIS pour FRROU).
+- **Taux de couverture du matching** : passé de **21 % à 38 %** en messages sur un scan 8-zones × 300 s.
+
+### Fixed
+
+- **Faux positif Haifa → FISHFARMS** — l'alias court `HFA` matchait la sous-chaîne "HFA" présente dans "FIS**HFA**RMS" via la règle de matching par inclusion. Remplacé par `IL HFA` (forme avec espace observée dans les destinations AIS réelles). La règle `length <= 2` du matcher ne couvrait pas les alias 3 caractères.
+
+### Notes
+
+- Aucune nouvelle dépendance npm.
+- Sources web consultées : sites officiels des autorités portuaires (Port of Antwerp-Bruges, North Sea Port, Port Gdansk, Valenciaport, HAROPA, etc.), USDA AMS pour Tuxpan, Wikipedia pour les UN/LOCODES.
+- 813 destinations uniques collectées sur le scan post-enrichissement, 574 restent non couvertes (placeholders AIS "ORDER"/"FOR ORDERS"/"FISHFARMS" majoritairement).
+
 ## [1.3.0] — 2026-05-19
 
 ### Added
