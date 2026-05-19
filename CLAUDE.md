@@ -227,6 +227,28 @@ vercel deploy      # Déployer sur Vercel
 - Les commits sont validés et exécutés par le développeur
 - Convention commit messages : `feat:`, `fix:`, `chore:`, `docs:`
 
+## Roadmap (prochaines étapes)
+
+### Étape 9 — Nationalité des navires (MMSI MID codes)
+- Extraire le code MID (3 premiers chiffres du MMSI) pour déterminer le pays d'immatriculation du navire
+- Table de correspondance MID → pays (source : ITU, ~200 entrées). Fichier `src/data/midCountries.js` ou `.json`
+- Afficher le drapeau emoji 🇫🇷 et le nom du pays dans l'InfoPanel, à côté du MMSI
+- Optionnel : filtre par nationalité dans la toolbar, statistiques par pavillon dans le SummaryBanner
+- Référence : https://www.itu.int/en/ITU-R/terrestrial/fmd/Pages/mid.aspx
+
+### Étape 10 — Navigation inter-apps (fenêtres nommées)
+- Problème : les liens entre GrainWatch et GrainTrack3D ouvrent un nouvel onglet à chaque clic, ce qui multiplie les fenêtres et consomme du GPU/WebSocket inutilement
+- Solution : utiliser l'attribut `target="graintrack3d"` côté GrainWatch et `target="grainwatch"` côté GrainTrack3D pour que le navigateur réutilise l'onglet existant au lieu d'en ouvrir un nouveau
+- Fonctionne aussi en JS : `window.open('url', 'graintrack3d')` — même nom = même onglet
+- À implémenter des deux côtés lors de l'intégration GrainWatch ↔ GrainTrack3D
+
+### Idées futures (non priorisées)
+- Heatmap de densité de trafic par zone
+- Historique de trajectoire (trail) pour le navire sélectionné
+- Intégration GrainWatch en iframe (filtre céréale synchronisé via paramètre URL `?grain=xxx`)
+- Système d'enrichissement autonome de grainPorts.json (scan périodique + suggestions auto)
+- Mode "replay" : rejouer une journée de trafic en accéléré
+
 ## Ressources textures ✅ TERMINÉE
 
 Texture NASA Blue Marble Next Generation (décembre, topographie + bathymétrie)
