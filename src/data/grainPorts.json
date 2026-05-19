@@ -305,7 +305,7 @@
       "name": "Haifa",
       "unlocode": "ILHFA",
       "country": "IL",
-      "aliases": ["HAIFA", "HFA", "ILHFA"],
+      "aliases": ["HAIFA", "ILHFA", "IL HFA"],
       "role": "import"
     },
     {
@@ -334,6 +334,41 @@
       "unlocode": "GRPIR",
       "country": "GR",
       "aliases": ["PIRAEUS", "PEIRAIAS", "PIR", "GRPIR"],
+      "role": "import"
+    },
+    {
+      "name": "Ghent",
+      "unlocode": "BEGNE",
+      "country": "BE",
+      "aliases": ["GHENT", "GENT", "GAND", "GNE", "BEGNE", "BE GNE"],
+      "role": "import"
+    },
+    {
+      "name": "Klaipeda",
+      "unlocode": "LTKLJ",
+      "country": "LT",
+      "aliases": ["KLAIPEDA", "KLAIPĖDA", "KLJ", "LTKLJ"],
+      "role": "export"
+    },
+    {
+      "name": "Szczecin",
+      "unlocode": "PLSZZ",
+      "country": "PL",
+      "aliases": ["SZCZECIN", "STETTIN", "SZZ", "PLSZZ"],
+      "role": "export"
+    },
+    {
+      "name": "Trieste",
+      "unlocode": "ITTRS",
+      "country": "IT",
+      "aliases": ["TRIESTE", "TRS", "ITTRS"],
+      "role": "import"
+    },
+    {
+      "name": "Emden",
+      "unlocode": "DEEME",
+      "country": "DE",
+      "aliases": ["EMDEN", "EME", "DEEME"],
       "role": "import"
     }
   ],
@@ -482,7 +517,7 @@
       "name": "Haifa",
       "unlocode": "ILHFA",
       "country": "IL",
-      "aliases": ["HAIFA", "HFA", "ILHFA"],
+      "aliases": ["HAIFA", "ILHFA", "IL HFA"],
       "role": "import"
     },
     {
@@ -504,6 +539,34 @@
       "unlocode": "GRPIR",
       "country": "GR",
       "aliases": ["PIRAEUS", "PEIRAIAS", "PIR", "GRPIR"],
+      "role": "import"
+    },
+    {
+      "name": "Ghent",
+      "unlocode": "BEGNE",
+      "country": "BE",
+      "aliases": ["GHENT", "GENT", "GAND", "GNE", "BEGNE", "BE GNE"],
+      "role": "import"
+    },
+    {
+      "name": "Klaipeda",
+      "unlocode": "LTKLJ",
+      "country": "LT",
+      "aliases": ["KLAIPEDA", "KLAIPĖDA", "KLJ", "LTKLJ"],
+      "role": "export"
+    },
+    {
+      "name": "Szczecin",
+      "unlocode": "PLSZZ",
+      "country": "PL",
+      "aliases": ["SZCZECIN", "STETTIN", "SZZ", "PLSZZ"],
+      "role": "export"
+    },
+    {
+      "name": "Trieste",
+      "unlocode": "ITTRS",
+      "country": "IT",
+      "aliases": ["TRIESTE", "TRS", "ITTRS"],
       "role": "import"
     }
   ],
@@ -745,7 +808,7 @@
       "name": "Haifa",
       "unlocode": "ILHFA",
       "country": "IL",
-      "aliases": ["HAIFA", "HFA", "ILHFA"],
+      "aliases": ["HAIFA", "ILHFA", "IL HFA"],
       "role": "import"
     },
     {
@@ -760,6 +823,20 @@
       "unlocode": "MXTUX",
       "country": "MX",
       "aliases": ["TUXPAN", "TUX", "MXTUX"],
+      "role": "import"
+    },
+    {
+      "name": "Ghent",
+      "unlocode": "BEGNE",
+      "country": "BE",
+      "aliases": ["GHENT", "GENT", "GAND", "GNE", "BEGNE", "BE GNE"],
+      "role": "import"
+    },
+    {
+      "name": "Trieste",
+      "unlocode": "ITTRS",
+      "country": "IT",
+      "aliases": ["TRIESTE", "TRS", "ITTRS"],
       "role": "import"
     }
   ],
@@ -987,7 +1064,7 @@
       "name": "Haifa",
       "unlocode": "ILHFA",
       "country": "IL",
-      "aliases": ["HAIFA", "HFA", "ILHFA"],
+      "aliases": ["HAIFA", "ILHFA", "IL HFA"],
       "role": "import"
     },
     {
@@ -996,6 +1073,27 @@
       "country": "ES",
       "aliases": ["BARCELONA", "BCN", "ESBCN"],
       "role": "import"
+    },
+    {
+      "name": "Ghent",
+      "unlocode": "BEGNE",
+      "country": "BE",
+      "aliases": ["GHENT", "GENT", "GAND", "GNE", "BEGNE", "BE GNE"],
+      "role": "import"
+    },
+    {
+      "name": "Klaipeda",
+      "unlocode": "LTKLJ",
+      "country": "LT",
+      "aliases": ["KLAIPEDA", "KLAIPĖDA", "KLJ", "LTKLJ"],
+      "role": "export"
+    },
+    {
+      "name": "Szczecin",
+      "unlocode": "PLSZZ",
+      "country": "PL",
+      "aliases": ["SZCZECIN", "STETTIN", "SZZ", "PLSZZ"],
+      "role": "export"
     }
   ],
   "oats": [
@@ -1124,7 +1222,7 @@
       "name": "Haifa",
       "unlocode": "ILHFA",
       "country": "IL",
-      "aliases": ["HAIFA", "HFA", "ILHFA"],
+      "aliases": ["HAIFA", "ILHFA", "IL HFA"],
       "role": "import"
     }
   ],
@@ -1224,7 +1322,35 @@
       "name": "Haifa",
       "unlocode": "ILHFA",
       "country": "IL",
-      "aliases": ["HAIFA", "HFA", "ILHFA"],
+      "aliases": ["HAIFA", "ILHFA", "IL HFA"],
+      "role": "import"
+    },
+    {
+      "name": "Ghent",
+      "unlocode": "BEGNE",
+      "country": "BE",
+      "aliases": ["GHENT", "GENT", "GAND", "GNE", "BEGNE", "BE GNE"],
+      "role": "import"
+    },
+    {
+      "name": "Klaipeda",
+      "unlocode": "LTKLJ",
+      "country": "LT",
+      "aliases": ["KLAIPEDA", "KLAIPĖDA", "KLJ", "LTKLJ"],
+      "role": "export"
+    },
+    {
+      "name": "Szczecin",
+      "unlocode": "PLSZZ",
+      "country": "PL",
+      "aliases": ["SZCZECIN", "STETTIN", "SZZ", "PLSZZ"],
+      "role": "export"
+    },
+    {
+      "name": "Emden",
+      "unlocode": "DEEME",
+      "country": "DE",
+      "aliases": ["EMDEN", "EME", "DEEME"],
       "role": "import"
     }
   ],
