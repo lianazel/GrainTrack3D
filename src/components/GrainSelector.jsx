@@ -24,9 +24,6 @@ export default function GrainSelector() {
           </option>
         ))}
       </select>
-      <p className="grain-disclaimer">
-        Filtrage approximatif base sur les destinations AIS declarees
-      </p>
     </div>
   )
 }

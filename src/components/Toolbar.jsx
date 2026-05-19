@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useShipStore } from '../stores/useShipStore'
 import { matchShipToGrain } from '../utils/portMatcher'
 import { GRAIN_BY_KEY } from '../data/grainList'
+import AboutScreen from './AboutScreen'
 
 function todayISODate() {
   return new Date().toISOString().slice(0, 10)
@@ -79,6 +80,7 @@ export default function Toolbar() {
   // Decale la toolbar quand l'InfoPanel est ouvert pour eviter le chevauchement.
   const panelOpen = useShipStore((s) => s.selectedMMSI != null)
   const [open, setOpen] = useState(false)
+  const [showAbout, setShowAbout] = useState(false)
 
   const handlePNG = () => {
     exportPNG(todayISODate())
@@ -90,41 +92,57 @@ export default function Toolbar() {
     setOpen(false)
   }
 
+  const handleAbout = () => {
+    setShowAbout(true)
+    setOpen(false)
+  }
+
   return (
-    <div className={`toolbar ${panelOpen ? 'toolbar-shifted' : ''}`}>
-      {/* Menu rendu AVANT le bouton dans le DOM : avec flex-direction column,
-          il apparait au-dessus du toggle (ouverture vers le haut, attendu
-          pour un anchor bottom-right). */}
-      {open && (
-        <div className="toolbar-menu" role="menu">
-          <button
-            type="button"
-            className="toolbar-menu-item"
-            role="menuitem"
-            onClick={handlePNG}
-          >
-            📷 Capture PNG
-          </button>
-          <button
-            type="button"
-            className="toolbar-menu-item"
-            role="menuitem"
-            onClick={handleMarkdown}
-          >
-            📋 Export Markdown
-          </button>
-        </div>
-      )}
-      <button
-        type="button"
-        className="toolbar-btn"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label="Menu d'export"
-        onClick={() => setOpen((v) => !v)}
-      >
-        ⋮
-      </button>
-    </div>
+    <>
+      <div className={`toolbar ${panelOpen ? 'toolbar-shifted' : ''}`}>
+        {/* Menu rendu AVANT le bouton dans le DOM : avec flex-direction column,
+            il apparait au-dessus du toggle (ouverture vers le haut, attendu
+            pour un anchor bottom-right). */}
+        {open && (
+          <div className="toolbar-menu" role="menu">
+            <button
+              type="button"
+              className="toolbar-menu-item"
+              role="menuitem"
+              onClick={handlePNG}
+            >
+              📷 Capture PNG
+            </button>
+            <button
+              type="button"
+              className="toolbar-menu-item"
+              role="menuitem"
+              onClick={handleMarkdown}
+            >
+              📋 Export Markdown
+            </button>
+            <button
+              type="button"
+              className="toolbar-menu-item"
+              role="menuitem"
+              onClick={handleAbout}
+            >
+              ℹ️ A propos
+            </button>
+          </div>
+        )}
+        <button
+          type="button"
+          className="toolbar-btn"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-label="Menu d'export"
+          onClick={() => setOpen((v) => !v)}
+        >
+          ⋮
+        </button>
+      </div>
+      {showAbout && <AboutScreen onClose={() => setShowAbout(false)} />}
+    </>
   )
 }

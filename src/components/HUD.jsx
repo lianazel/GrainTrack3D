@@ -1,5 +1,4 @@
 import { useShipStore } from '../stores/useShipStore'
-import { version as APP_VERSION } from '../../package.json'
 
 const STATUS_LABELS = {
   idle: 'Inactif',
@@ -16,7 +15,6 @@ export default function HUD() {
     <div className="hud" role="status" aria-live="polite">
       <span className={`hud-badge hud-badge-${status}`} aria-label={STATUS_LABELS[status] ?? status} />
       <span className="hud-status">{STATUS_LABELS[status] ?? status}</span>
-      <span className="hud-version">v{APP_VERSION}</span>
     </div>
   )
 }
